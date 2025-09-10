@@ -44,9 +44,10 @@ function renderStars(rating: number) {
   ));
 }
 
-function formatDate(date: Date) {
+function formatDate(date: Date | string) {
   const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const diff = now.getTime() - dateObj.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   
   if (days === 0) return "Hoje";
