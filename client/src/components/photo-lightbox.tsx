@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -11,7 +11,35 @@ interface PhotoLightboxProps {
 }
 
 export function PhotoLightbox({ photos, isOpen, onClose, initialIndex = 0 }: PhotoLightboxProps) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Sync currentIndex with initialIndex and clamp to valid range
+  useEffect(() => {
+    if (!isOpen || !photos || photos.length === 0) return;
+    const safeIndex = Math.max(0, Math.min(initialIndex, photos.length - 1));
+    setCurrentIndex(safeIndex);
+  }, [isOpen, initialIndex, photos]);
+
+  // Global keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goToPrevious();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goToNext();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
@@ -21,15 +49,6 @@ export function PhotoLightbox({ photos, isOpen, onClose, initialIndex = 0 }: Pho
     setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
-      goToPrevious();
-    } else if (e.key === "ArrowRight") {
-      goToNext();
-    } else if (e.key === "Escape") {
-      onClose();
-    }
-  };
 
   const downloadImage = (imageUrl: string, index: number) => {
     const link = document.createElement("a");
@@ -40,13 +59,12 @@ export function PhotoLightbox({ photos, isOpen, onClose, initialIndex = 0 }: Pho
     document.body.removeChild(link);
   };
 
-  if (!photos || photos.length === 0) return null;
+  if (!photos || photos.length === 0 || !isOpen) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className="max-w-7xl w-full h-full p-0 bg-black/95 border-none"
-        onKeyDown={handleKeyDown}
         data-testid="photo-lightbox"
       >
         <div className="relative w-full h-full flex items-center justify-center">
