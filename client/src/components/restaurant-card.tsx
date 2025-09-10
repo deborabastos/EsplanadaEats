@@ -30,19 +30,36 @@ function renderStars(rating: number) {
 }
 
 export default function RestaurantCard({ restaurant, onClick }: RestaurantCardProps) {
-  // Use placeholder images from Unsplash with restaurant themes
-  const imageUrls = [
-    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-    "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-    "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-    "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-    "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
-  ];
+  // Get photo prioritizing restaurant photos, then review photos, then placeholders
+  const getRestaurantImage = () => {
+    // First try to find a photo from the restaurant's initial review (sistema review)
+    const systemReview = restaurant.reviews.find(review => review.userName === "Sistema");
+    if (systemReview && systemReview.photos && systemReview.photos.length > 0) {
+      return systemReview.photos[0];
+    }
+    
+    // Then try to find a photo from any other review with photos
+    for (const review of restaurant.reviews) {
+      if (review.userName !== "Sistema" && review.photos && review.photos.length > 0) {
+        return review.photos[0];
+      }
+    }
+    
+    // Fall back to placeholder images if no photos uploaded
+    const placeholderUrls = [
+      "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+      "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+      "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+    ];
+    
+    const imageIndex = restaurant.name.length % placeholderUrls.length;
+    return placeholderUrls[imageIndex];
+  };
 
-  // Use hash of restaurant name to consistently select an image
-  const imageIndex = restaurant.name.length % imageUrls.length;
-  const imageUrl = imageUrls[imageIndex];
+  const imageUrl = getRestaurantImage();
 
   return (
     <Card 

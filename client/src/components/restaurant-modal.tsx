@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { X, Star, DollarSign, Utensils, Clock, Upload } from "lucide-react";
+import { X, Star, DollarSign, Utensils, Clock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import StarRating from "@/components/star-rating";
+import StarRating from "./star-rating";
+import { PhotoUpload } from "./photo-upload";
 import type { RestaurantWithStats, InsertReview } from "@shared/schema";
 import { insertReviewSchema } from "@shared/schema";
 
@@ -107,11 +108,36 @@ export default function RestaurantModal({
     createReviewMutation.mutate(data);
   };
 
-  // Use placeholder images from Unsplash
-  const restaurantImages = [
-    "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-    "https://images.unsplash.com/photo-1520072959219-c595dc870360?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
-  ];
+  // Get restaurant images from uploaded photos or fallback to placeholders
+  const getRestaurantImages = () => {
+    const allPhotos: string[] = [];
+    
+    // First add photos from the system review (initial restaurant photos)
+    const systemReview = restaurant.reviews.find(review => review.userName === "Sistema");
+    if (systemReview && systemReview.photos) {
+      allPhotos.push(...systemReview.photos);
+    }
+    
+    // Then add photos from other reviews
+    restaurant.reviews.forEach(review => {
+      if (review.userName !== "Sistema" && review.photos) {
+        allPhotos.push(...review.photos);
+      }
+    });
+    
+    // If we have uploaded photos, use them (limit to 4 for hero section)
+    if (allPhotos.length > 0) {
+      return allPhotos.slice(0, 4);
+    }
+    
+    // Fallback to placeholder images if no photos uploaded
+    return [
+      "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+      "https://images.unsplash.com/photo-1520072959219-c595dc870360?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400",
+    ];
+  };
+  
+  const restaurantImages = getRestaurantImages();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -124,7 +150,15 @@ export default function RestaurantModal({
 
         <div className="space-y-6">
           {/* Restaurant Images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${
+            restaurantImages.length === 1 
+              ? "grid-cols-1" 
+              : restaurantImages.length === 2 
+              ? "grid-cols-1 md:grid-cols-2" 
+              : restaurantImages.length === 3
+              ? "grid-cols-1 md:grid-cols-3"
+              : "grid-cols-2 md:grid-cols-2"
+          }`}>
             {restaurantImages.map((src, index) => (
               <img
                 key={index}
@@ -327,14 +361,22 @@ export default function RestaurantModal({
                       )}
                     />
 
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Fotos (opcional)</label>
-                      <div className="border-2 border-dashed border-input rounded-lg p-6 text-center">
-                        <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">Clique para adicionar fotos ou arraste aqui</p>
-                        <input type="file" multiple accept="image/*" className="hidden" />
-                      </div>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="photos"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <PhotoUpload
+                              photos={field.value || []}
+                              onPhotosChange={field.onChange}
+                              maxPhotos={3}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <Button 
                       type="submit" 

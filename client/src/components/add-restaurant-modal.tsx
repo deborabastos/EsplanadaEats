@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import StarRating from "@/components/star-rating";
+import StarRating from "./star-rating";
+import { PhotoUpload } from "@/components/photo-upload";
 import type { InsertRestaurant } from "@shared/schema";
 import { insertRestaurantSchema } from "@shared/schema";
 
@@ -186,17 +187,22 @@ export default function AddRestaurantModal({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Fotos (opcional)</label>
-              <div className="border-2 border-dashed border-input rounded-lg p-8 text-center">
-                <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
-                <p className="text-muted-foreground mb-2">
-                  Clique para adicionar fotos ou arraste aqui
-                </p>
-                <p className="text-sm text-muted-foreground">PNG, JPG até 5MB cada</p>
-                <input type="file" multiple accept="image/*" className="hidden" />
-              </div>
-            </div>
+            <FormField
+              control={form.control}
+              name="photos"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <PhotoUpload
+                      photos={field.value || []}
+                      onPhotosChange={field.onChange}
+                      maxPhotos={5}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex space-x-3">
               <Button 
