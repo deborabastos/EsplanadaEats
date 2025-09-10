@@ -41,7 +41,7 @@ export default function Home() {
       return false;
     }
     
-    if (filters.bureaucracy && filters.bureaucracy !== "all" && restaurant.averageBureaucracy < parseFloat(filters.bureaucracy)) {
+    if (filters.bureaucracy && filters.bureaucracy !== "all" && restaurant.averageBureaucracy > parseFloat(filters.bureaucracy)) {
       return false;
     }
     
