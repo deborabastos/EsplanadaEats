@@ -93,7 +93,7 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
             </span>
           </div>
           <div>
-            <span className="text-muted-foreground">Burocracia:</span>
+            <span className="text-muted-foreground">Acesso:</span>
             <div className="flex items-center ml-1">
               {renderStars(restaurant.averageBureaucracy)}
             </div>

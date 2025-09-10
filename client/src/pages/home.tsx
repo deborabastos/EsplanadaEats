@@ -66,7 +66,7 @@ export default function Home() {
               <UtensilsCrossed className="text-primary text-2xl" />
               <div>
                 <h1 className="text-xl font-bold text-foreground">Restaurantes da Esplanada</h1>
-                <p className="text-sm text-muted-foreground">Avaliações dos Ministérios</p>
+                <p className="text-sm text-muted-foreground">Avaliações dos Servidores</p>
               </div>
             </div>
             <Button 
@@ -191,7 +191,7 @@ export default function Home() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">Burocracia</label>
+                <label className="block text-sm font-medium mb-2">Acesso</label>
                 <Select
                   value={filters.bureaucracy}
                   onValueChange={(value) => setFilters(prev => ({ ...prev, bureaucracy: value }))}

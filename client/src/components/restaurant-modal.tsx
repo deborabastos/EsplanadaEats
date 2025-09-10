@@ -215,7 +215,7 @@ export default function RestaurantModal({
                 <div className="flex justify-center mb-1">
                   {renderStars(restaurant.averageBureaucracy)}
                 </div>
-                <p className="text-sm text-muted-foreground">Burocracia</p>
+                <p className="text-sm text-muted-foreground">Acesso</p>
               </CardContent>
             </Card>
           </div>
@@ -314,7 +314,7 @@ export default function RestaurantModal({
                         name="bureaucracy"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Burocracia para entrar *</FormLabel>
+                            <FormLabel>Acesso (0 a 5 estrelas) *</FormLabel>
                             <FormControl>
                               <StarRating
                                 value={field.value}
@@ -454,7 +454,7 @@ export default function RestaurantModal({
                             </span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Burocracia:</span>
+                            <span className="text-muted-foreground">Acesso:</span>
                             <div className="flex items-center ml-1">
                               {renderStars(review.bureaucracy)}
                             </div>

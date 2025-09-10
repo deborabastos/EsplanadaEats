@@ -171,7 +171,7 @@ export default function AddRestaurantModal({
                 name="initialBureaucracy"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Burocracia para entrar *</FormLabel>
+                    <FormLabel>Acesso (0 a 5 estrelas) *</FormLabel>
                     <FormControl>
                       <div className="py-2">
                         <StarRating
