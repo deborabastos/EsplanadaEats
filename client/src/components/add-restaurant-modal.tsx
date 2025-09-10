@@ -31,6 +31,7 @@ export default function AddRestaurantModal({
     resolver: zodResolver(insertRestaurantSchema),
     defaultValues: {
       name: "",
+      operatingHours: "",
       initialPrice: 0,
       initialQuality: 0,
       initialFoodOptionsForAugusto: "many",
@@ -63,7 +64,12 @@ export default function AddRestaurantModal({
   });
 
   const onSubmit = (data: InsertRestaurant) => {
-    createRestaurantMutation.mutate(data);
+    // Normalize empty operating hours to undefined
+    const normalizedData = {
+      ...data,
+      operatingHours: data.operatingHours?.trim() || undefined,
+    };
+    createRestaurantMutation.mutate(normalizedData);
   };
 
   const handleClose = () => {
@@ -91,6 +97,24 @@ export default function AddRestaurantModal({
                       placeholder="Ex: Pizzaria do João" 
                       {...field} 
                       data-testid="input-restaurant-name"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="operatingHours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Horário de Funcionamento</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Ex: Seg-Sex 11h-22h, Sáb-Dom 12h-23h" 
+                      {...field} 
+                      data-testid="input-operating-hours"
                     />
                   </FormControl>
                   <FormMessage />

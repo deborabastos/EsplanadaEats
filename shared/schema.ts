@@ -3,6 +3,7 @@ import { z } from "zod";
 export const restaurants = z.object({
   id: z.string(),
   name: z.string(),
+  operatingHours: z.string().optional(),
   createdAt: z.date(),
 });
 
@@ -21,6 +22,7 @@ export const reviews = z.object({
 
 export const insertRestaurantSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
+  operatingHours: z.string().optional(),
   initialPrice: z.number().min(0, "Preço deve ser positivo"),
   initialQuality: z.number().min(0).max(5),
   initialFoodOptionsForAugusto: z.enum(["many", "some", "few", "none"]),

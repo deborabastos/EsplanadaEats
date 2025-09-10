@@ -156,6 +156,12 @@ export default function RestaurantModal({
           <DialogTitle className="text-2xl font-bold" data-testid="text-modal-restaurant-name">
             {restaurant.name}
           </DialogTitle>
+          {restaurant.operatingHours && (
+            <p className="text-sm text-muted-foreground" data-testid="text-operating-hours">
+              <Clock className="inline h-4 w-4 mr-1" />
+              {restaurant.operatingHours}
+            </p>
+          )}
         </DialogHeader>
 
         <div className="space-y-6">

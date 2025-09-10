@@ -119,6 +119,7 @@ export class MemStorage implements IStorage {
     const restaurant: Restaurant = {
       id,
       name: insertRestaurant.name,
+      operatingHours: insertRestaurant.operatingHours || undefined,
       createdAt: new Date(),
     };
     

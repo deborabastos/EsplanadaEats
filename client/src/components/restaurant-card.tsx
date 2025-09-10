@@ -1,4 +1,4 @@
-import { Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { RestaurantWithStats } from "@shared/schema";
@@ -74,9 +74,17 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
       />
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold" data-testid={`text-restaurant-name-${restaurant.id}`}>
-            {restaurant.name}
-          </h3>
+          <div>
+            <h3 className="text-lg font-semibold" data-testid={`text-restaurant-name-${restaurant.id}`}>
+              {restaurant.name}
+            </h3>
+            {restaurant.operatingHours && (
+              <p className="text-xs text-muted-foreground" data-testid={`text-operating-hours-card-${restaurant.id}`}>
+                <Clock className="inline h-3 w-3 mr-1" />
+                {restaurant.operatingHours}
+              </p>
+            )}
+          </div>
           <div className="flex items-center space-x-1">
             <Star className="h-4 w-4 text-accent fill-accent" />
             <span className="text-sm font-medium" data-testid={`text-restaurant-rating-${restaurant.id}`}>
