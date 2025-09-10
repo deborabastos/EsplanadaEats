@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import StarRating from "./star-rating";
 import { PhotoUpload } from "./photo-upload";
+import { PhotoLightbox } from "./photo-lightbox";
 import type { RestaurantWithStats, InsertReview } from "@shared/schema";
 import { insertReviewSchema } from "@shared/schema";
 
@@ -65,6 +66,9 @@ export default function RestaurantModal({
   onReviewAdded 
 }: RestaurantModalProps) {
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxPhotos, setLightboxPhotos] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const { toast } = useToast();
 
   const form = useForm<InsertReview>({
@@ -106,6 +110,12 @@ export default function RestaurantModal({
 
   const onSubmit = (data: InsertReview) => {
     createReviewMutation.mutate(data);
+  };
+
+  const openLightbox = (photos: string[], index: number = 0) => {
+    setLightboxPhotos(photos);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
   // Get restaurant images from uploaded photos or fallback to placeholders
@@ -459,14 +469,29 @@ export default function RestaurantModal({
                         
                         {review.photos && review.photos.length > 0 && (
                           <div className="flex space-x-2">
-                            {review.photos.slice(0, 2).map((photo, index) => (
-                              <img
+                            {review.photos.slice(0, 3).map((photo, index) => (
+                              <button
                                 key={index}
-                                src={photo}
-                                alt={`Foto da avaliação ${index + 1}`}
-                                className="w-16 h-16 object-cover rounded-lg"
-                              />
+                                onClick={() => openLightbox(review.photos || [], index)}
+                                className="w-20 h-20 rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
+                                data-testid={`review-photo-${review.id}-${index}`}
+                              >
+                                <img
+                                  src={photo}
+                                  alt={`Foto da avaliação ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
                             ))}
+                            {review.photos.length > 3 && (
+                              <button
+                                onClick={() => openLightbox(review.photos || [], 3)}
+                                className="w-20 h-20 rounded-lg bg-black/20 flex items-center justify-center text-white text-sm font-medium hover:bg-black/30 transition-colors"
+                                data-testid={`review-photos-more-${review.id}`}
+                              >
+                                +{review.photos.length - 3}
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -478,6 +503,13 @@ export default function RestaurantModal({
           </div>
         </div>
       </DialogContent>
+      
+      <PhotoLightbox
+        photos={lightboxPhotos}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        initialIndex={lightboxIndex}
+      />
     </Dialog>
   );
 }
