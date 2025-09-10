@@ -4,9 +4,9 @@ import { UtensilsCrossed, Store, Star, MessageCircle, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import RestaurantCard from "@/components/restaurant-card";
-import RestaurantModal from "@/components/restaurant-modal";
-import AddRestaurantModal from "@/components/add-restaurant-modal";
+import RestaurantCard from "../components/restaurant-card";
+import RestaurantModal from "../components/restaurant-modal";
+import AddRestaurantModal from "../components/add-restaurant-modal";
 import type { RestaurantWithStats } from "@shared/schema";
 
 export default function Home() {
