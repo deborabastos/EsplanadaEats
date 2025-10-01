@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Rating Calculation Logic (Story 3.4)</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .test-section { margin: 2rem 0; padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; }
+        .test-section h2 { margin-top: 0; color: #333; }
+        .log { background: #f8f9fa; padding: 1rem; margin: 1rem 0; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; border-radius: 4px; }
+        .btn { background: #007bff; color: white; padding: 0.5rem 1rem; border: none; cursor: pointer; margin: 0.5rem; border-radius: 4px; }
+        .btn:hover { background: #0056b3; }
+        .btn.secondary { background: #6c757d; }
+        .btn.secondary:hover { background: #545b62; }
+        .result { background: #e7f3ff; padding: 1rem; margin: 1rem 0; border-radius: 4px; border-left: 4px solid #007bff; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .stat-card { background: #f8f9fa; padding: 1rem; border-radius: 4px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: #007bff; }
+        .stat-label { font-size: 0.9rem; color: #666; }
+        .offline-indicator { color: #dc3545; font-weight: bold; }
+        .cache-status { background: #d4edda; padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; }
+        .cache-status.empty { background: #f8d7da; }
+        .error { color: red; background: #ffe6e6; padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; }
+        .success { color: green; background: #e6ffe6; padding: 0.5rem; border-radius: 4px; margin: 0.5rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Teste - Rating Calculation Logic (Story 3.4)</h1>
+            <p>Teste abrangente do sistema de cálculo de avaliações com suporte offline, cache em tempo real e estatísticas avançadas.</p>
+        </header>
+
+        <main>
+            <!-- Status Section -->
+            <section class="test-section">
+                <h2>📊 Status dos Serviços</h2>
+                <div id="service-status">
+                    <button class="btn" onclick="checkServiceStatus()">Verificar Status dos Serviços</button>
+                    <div id="service-status-result"></div>
+                </div>
+            </section>
+
+            <!-- Basic Calculation Test -->
+            <section class="test-section">
+                <h2>🔢 Teste de Cálculo Básico</h2>
+                <button class="btn" onclick="testBasicCalculation()">Testar Cálculo Básico</button>
+                <button class="btn secondary" onclick="testCalculationWithForceRefresh()">Cálculo com Force Refresh</button>
+                <div id="basic-calculation-result"></div>
+            </section>
+
+            <!-- Advanced Statistics Test -->
+            <section class="test-section">
+                <h2>📈 Teste de Estatísticas Avançadas</h2>
+                <button class="btn" onclick="testAdvancedStatistics()">Testar Estatísticas Completas</button>
+                <div id="advanced-stats-result"></div>
+            </section>
+
+            <!-- Real-time Updates Test -->
+            <section class="test-section">
+                <h2>⚡ Teste de Atualizações em Tempo Real</h2>
+                <button class="btn" onclick="testRealtimeUpdates()">Iniciar Teste Real-time</button>
+                <button class="btn secondary" onclick="submitTestRating()">Enviar Avaliação de Teste</button>
+                <div id="realtime-test-result"></div>
+                <div id="realtime-log" class="log">Aguardando início do teste real-time...</div>
+            </section>
+
+            <!-- Cache Performance Test -->
+            <section class="test-section">
+                <h2>🚀 Teste de Performance de Cache</h2>
+                <button class="btn" onclick="testCachePerformance()">Testar Performance Cache</button>
+                <button class="btn secondary" onclick="clearCache()">Limpar Cache</button>
+                <div id="cache-test-result"></div>
+            </section>
+
+            <!-- Batch Operations Test -->
+            <section class="test-section">
+                <h2>📦 Teste de Operações em Lote</h2>
+                <button class="btn" onclick="testBatchOperations()">Testar Atualização em Lote</button>
+                <div id="batch-test-result"></div>
+            </section>
+
+            <!-- Offline Mode Test -->
+            <section class="test-section">
+                <h2>📴 Teste de Modo Offline</h2>
+                <button class="btn" onclick="testOfflineMode()">Testar Funcionalidade Offline</button>
+                <button class="btn secondary" onclick="simulateOffline()">Simular Modo Offline</button>
+                <button class="btn secondary" onclick="simulateOnline()">Simular Modo Online</button>
+                <div id="offline-test-result"></div>
+            </section>
+
+            <!-- Calculation History Test -->
+            <section class="test-section">
+                <h2>📜 Teste de Histórico de Cálculos</h2>
+                <button class="btn" onclick="testCalculationHistory()">Ver Histórico de Cálculos</button>
+                <div id="history-test-result"></div>
+            </section>
+
+            <!-- Concurrency Test -->
+            <section class="test-section">
+                <h2>🔄 Teste de Concorrência</h2>
+                <button class="btn" onclick="testConcurrentCalculations()">Testar Cálculos Simultâneos</button>
+                <div id="concurrency-test-result"></div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="log" id="main-log">Iniciando testes do Story 3.4...</div>
+        </footer>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js?v=2.1.0"></script>
+
+    <script>
+        let storageService, calculationService, realtimeService, offlineService;
+        let testRestaurantId = null;
+        let realtimeUnsubscribe = null;
+
+        const logDiv = document.getElementById('main-log');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logDiv.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function logToDiv(divId, message, type = 'info') {
+            const div = document.getElementById(divId);
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            div.innerHTML += `<div class="${type}">[${timestamp}] ${prefix} ${message}</div>`;
+        }
+
+        async function initializeServices() {
+            try {
+                log('Inicializando serviços...');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const { StorageService } = await import('./js/services/storage-service.js?v=1.0.2');
+                const { RatingCalculationService } = await import('./js/services/rating-calculation-service.js?v=1.0.1');
+                const { RealtimeRatingService } = await import('./js/services/realtime-rating-service.js?v=1.0.1');
+
+                storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+                calculationService = new RatingCalculationService(storageService);
+                realtimeService = new RealtimeRatingService(storageService, calculationService);
+
+                // Initialize offline service if available
+                try {
+                    const { OfflineRatingService } = await import('./js/services/offline-rating-service.js?v=1.0.1');
+                    offlineService = new OfflineRatingService(calculationService, storageService);
+                    log('Serviço offline inicializado com sucesso', 'success');
+                } catch (offlineError) {
+                    log(`Serviço offline não disponível: ${offlineError.message}`, 'warning');
+                    offlineService = null;
+                }
+
+                // Get a test restaurant
+                const restaurants = await storageService.getRestaurants();
+                if (restaurants.length > 0) {
+                    testRestaurantId = restaurants[0].id;
+                    log(`Restaurante de teste encontrado: ${restaurants[0].name} (${testRestaurantId})`);
+                } else {
+                    log('Nenhum restaurante encontrado para testes', 'warning');
+                }
+
+                log('Todos os serviços inicializados com sucesso!', 'success');
+                return true;
+
+            } catch (error) {
+                log(`Erro ao inicializar serviços: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function checkServiceStatus() {
+            const resultDiv = document.getElementById('service-status-result');
+            resultDiv.innerHTML = '<div>Verificando status...</div>';
+
+            try {
+                const status = {
+                    storage: !!storageService,
+                    calculation: !!calculationService,
+                    realtime: !!realtimeService,
+                    offline: !!offlineService,
+                    realtimeListeners: realtimeService ? realtimeService.getStatus().activeListeners : 0,
+                    cacheSize: calculationService ? calculationService.getCacheStatus().cacheSize : 0,
+                    offlineStatus: offlineService ? offlineService.getOfflineStatus() : null
+                };
+
+                let html = '<div class="stats-grid">';
+                html += `<div class="stat-card"><div class="stat-value">${status.storage ? '✅' : '❌'}</div><div class="stat-label">StorageService</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${status.calculation ? '✅' : '❌'}</div><div class="stat-label">CalculationService</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${status.realtime ? '✅' : '❌'}</div><div class="stat-label">RealtimeService</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${status.offline ? '✅' : '❌'}</div><div class="stat-label">OfflineService</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${status.realtimeListeners}</div><div class="stat-label">Listeners Ativos</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${status.cacheSize}</div><div class="stat-label">Cache Entries</div></div>`;
+                html += '</div>';
+
+                if (status.offlineStatus) {
+                    html += `<div class="cache-status">Status Offline: ${status.offlineStatus.isOffline ? 'Offline' : 'Online'} | Cache: ${status.offlineStatus.cacheSize} | Pendentes: ${status.offlineStatus.pendingSync}</div>`;
+                }
+
+                resultDiv.innerHTML = html;
+                log('Status dos serviços verificado com sucesso', 'success');
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Erro ao verificar status: ${error.message}</div>`;
+                log(`Erro ao verificar status: ${error.message}`, 'error');
+            }
+        }
+
+        async function testBasicCalculation() {
+            const resultDiv = document.getElementById('basic-calculation-result');
+            resultDiv.innerHTML = '<div>Executando cálculo básico...</div>';
+
+            if (!testRestaurantId) {
+                resultDiv.innerHTML = '<div class="error">Nenhum restaurante disponível para teste</div>';
+                return;
+            }
+
+            try {
+                const startTime = Date.now();
+                const calculation = await calculationService.calculateRestaurantRating(testRestaurantId);
+                const endTime = Date.now();
+
+                let html = '<div class="result">';
+                html += '<h3>Resultado do Cálculo Básico:</h3>';
+                html += `<div class="stats-grid">`;
+                html += `<div class="stat-card"><div class="stat-value">${calculation.averageQuality}</div><div class="stat-label">Média Geral</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${calculation.totalRatings}</div><div class="stat-label">Total de Avaliações</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${calculation.confidenceScore}</div><div class="stat-label">Score de Confiança</div></div>`;
+                html += `<div class="stat-card"><div class="stat-value">${calculation.weightedAverage}</div><div class="stat-label">Média Ponderada</div></div>`;
+                html += `</div>`;
+                html += `<p><strong>Tempo de execução:</strong> ${endTime - startTime}ms</p>`;
+                html += `<p><strong>Distribuição:</strong> ${JSON.stringify(calculation.ratingDistribution)}</p>`;
+                html += '</div>';
+
+                resultDiv.innerHTML = html;
+                log(`Cálculo básico concluído em ${endTime - startTime}ms`, 'success');
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">Erro no cálculo básico: ${error.message}</div>`;
+                log(`Erro no cálculo básico: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', async () => {
+            log('Página de teste do Story 3.4 carregada');
+            const initialized = await initializeServices();
+            if (initialized) {
+                log('Sistema pronto para testes! Clique nos botões acima para testar cada funcionalidade.', 'success');
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (realtimeUnsubscribe) {
+                realtimeUnsubscribe();
+            }
+            if (realtimeService) {
+                realtimeService.cleanup();
+            }
+            if (calculationService) {
+                calculationService.cleanup();
+            }
+            if (offlineService) {
+                offlineService.cleanup();
+            }
+        });
+    </script>
+</body>
+</html>

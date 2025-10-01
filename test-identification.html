@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test User Identification</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .result { margin: 10px 0; padding: 10px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>User Identification System Test</h1>
+
+    <div class="test-section">
+        <h2>Test Components</h2>
+        <button onclick="testFingerprintService()">Test Fingerprint Service</button>
+        <button onclick="testUserIdentificationService()">Test User Identification Service</button>
+        <button onclick="testCompleteFlow()">Test Complete Flow</button>
+        <button onclick="clearLocalStorage()">Clear Local Storage</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script type="module">
+        import { FingerprintService } from './js/services/fingerprint-service.js';
+        import { UserIdentificationService } from './js/services/user-identification-service.js';
+
+        window.fingerprintService = new FingerprintService();
+        window.identificationService = new UserIdentificationService();
+
+        window.addResult = function(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            resultsDiv.appendChild(result);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        window.testFingerprintService = async function() {
+            try {
+                addResult('Testing Fingerprint Service...', 'info');
+                const result = await fingerprintService.generateFingerprint();
+                addResult(`Fingerprint generated: ${result.hash.substring(0, 16)}...`, 'success');
+                addResult(`Data collected: ${Object.keys(result.data).join(', ')}`, 'success');
+                addResult(`Fingerprint service working correctly!`, 'success');
+            } catch (error) {
+                addResult(`Fingerprint service error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testUserIdentificationService = async function() {
+            try {
+                addResult('Testing User Identification Service...', 'info');
+
+                // Check if already identified
+                if (identificationService.isUserIdentified()) {
+                    const userData = identificationService.getUserData();
+                    addResult(`User already identified: ${userData.userName}`, 'info');
+                    return;
+                }
+
+                // Test initialization
+                const initResult = await identificationService.initializeUserIdentification();
+                if (initResult.needsIdentification) {
+                    addResult('User identification needed', 'info');
+                    addResult(`Fingerprint ready: ${initResult.fingerprintData.hash.substring(0, 16)}...`, 'success');
+                } else {
+                    addResult(`User already identified: ${initResult.userName}`, 'success');
+                }
+            } catch (error) {
+                addResult(`User identification service error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testCompleteFlow = async function() {
+            try {
+                addResult('Testing Complete Identification Flow...', 'info');
+
+                // Initialize
+                const initResult = await identificationService.initializeUserIdentification();
+
+                if (initResult.needsIdentification) {
+                    addResult('Please enter your name for identification:');
+
+                    const name = prompt('Enter your name:');
+                    if (name && name.trim().length >= 2) {
+                        const result = await identificationService.completeIdentification(name.trim());
+                        addResult(`User identified successfully: ${result.userName}`, 'success');
+                        addResult(`User ID: ${result.userId.substring(0, 16)}...`, 'success');
+                        addResult(`Display name: ${result.displayName}`, 'success');
+                    } else {
+                        addResult('Invalid name provided', 'error');
+                    }
+                } else {
+                    addResult(`User already identified: ${initResult.userName}`, 'info');
+                }
+            } catch (error) {
+                addResult(`Complete flow error: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearLocalStorage = function() {
+            localStorage.removeItem('esplanada_user_identification');
+            identificationService.userData = null;
+            identificationService.isIdentified = false;
+            addResult('Local storage cleared', 'info');
+        };
+
+        // Initial status check
+        addResult('Test page loaded successfully', 'success');
+        if (identificationService.isUserIdentified()) {
+            const userData = identificationService.getUserData();
+            addResult(`Current user: ${userData.userName}`, 'info');
+        } else {
+            addResult('No user currently identified', 'info');
+        }
+    </script>
+</body>
+</html>

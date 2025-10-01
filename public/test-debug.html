@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug: Firebase Connection</title>
+    <meta name="description" content="Debug Firebase connection issues">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .debug-step {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .step-success { background-color: #d4edda; color: #155724; }
+        .step-error { background-color: #f8d7da; color: #721c24; }
+        .step-pending { background-color: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>🔍 Debug: Firebase Connection</h1>
+        <p>Verificando cada passo da conexão Firebase...</p>
+
+        <div id="debug-steps"></div>
+
+        <div class="mt-4">
+            <h3>Ações de Teste</h3>
+            <button class="btn btn-primary me-2" onclick="testFirebaseInitialization()">Testar Inicialização Firebase</button>
+            <button class="btn btn-primary me-2" onclick="testFirestoreConnection()">Testar Conexão Firestore</button>
+            <button class="btn btn-primary me-2" onclick="testDataAccess()">Testar Acesso aos Dados</button>
+            <button class="btn btn-primary me-2" onclick="testRealtimeListener()">Testar Listener em Tempo Real</button>
+        </div>
+
+        <div class="mt-4">
+            <h3>Console do Navegador</h3>
+            <div id="console-output" style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; height: 300px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Restaurantes Encontrados</h3>
+            <div id="restaurants-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Debug console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole('LOG', args.join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('ERROR', args.join(' '));
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole('WARN', args.join(' '));
+        };
+
+        function addToConsole(type, message) {
+            const output = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'ERROR' ? '#dc3545' : type === 'WARN' ? '#ffc107' : '#28a745';
+            output.innerHTML += `<div style="color: ${color}; margin-bottom: 5px;">[${timestamp}] ${type}: ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function addDebugStep(step, status, message) {
+            const steps = document.getElementById('debug-steps');
+            const stepDiv = document.createElement('div');
+            stepDiv.className = `debug-step step-${status}`;
+            stepDiv.innerHTML = `
+                <strong>Passo ${step}:</strong> ${message}
+                ${status === 'success' ? ' ✅' : status === 'error' ? ' ❌' : ' ⏳'}
+            `;
+            steps.appendChild(stepDiv);
+        }
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL8Juo6PJQtFJx1KoJU7KGlc_OndCF3Ls",
+            authDomain: "esplanada-eats.firebaseapp.com",
+            projectId: "esplanada-eats",
+            storageBucket: "esplanada-eats.firebasestorage.app",
+            messagingSenderId: "403394772779",
+            appId: "1:403394772779:web:8db461c61fc21f9e418f6e"
+        };
+
+        let db, restaurantsRef, reviewsRef;
+
+        function testFirebaseInitialization() {
+            addDebugStep(1, 'pending', 'Inicializando Firebase...');
+
+            try {
+                // Check if Firebase is already initialized
+                if (firebase.apps.length > 0) {
+                    addDebugStep(1, 'success', 'Firebase já estava inicializado');
+                    console.log('Firebase já inicializado:', firebase.apps.length);
+                } else {
+                    firebase.initializeApp(firebaseConfig);
+                    addDebugStep(1, 'success', 'Firebase inicializado com sucesso');
+                    console.log('Firebase inicializado com sucesso');
+                }
+
+                // Initialize services
+                db = firebase.firestore();
+                restaurantsRef = db.collection('restaurants');
+                reviewsRef = db.collection('reviews');
+
+                addDebugStep(1, 'success', 'Serviços Firebase inicializados');
+                console.log('Serviços Firebase inicializados');
+
+                return true;
+            } catch (error) {
+                addDebugStep(1, 'error', `Erro na inicialização: ${error.message}`);
+                console.error('Erro na inicialização Firebase:', error);
+                return false;
+            }
+        }
+
+        function testFirestoreConnection() {
+            addDebugStep(2, 'pending', 'Testando conexão Firestore...');
+
+            if (!db) {
+                addDebugStep(2, 'error', 'Firestore não inicializado');
+                return false;
+            }
+
+            try {
+                // Test basic connection
+                const testRef = db.collection('connection-tests').doc('debug-test');
+
+                testRef.set({
+                    test: true,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    debug: true
+                })
+                .then(() => {
+                    addDebugStep(2, 'success', 'Conexão Firestore estabelecida');
+                    console.log('✅ Conexão Firestore testada com sucesso');
+                    return true;
+                })
+                .catch((error) => {
+                    addDebugStep(2, 'error', `Erro na conexão: ${error.message}`);
+                    console.error('❌ Erro na conexão Firestore:', error);
+                    return false;
+                });
+
+            } catch (error) {
+                addDebugStep(2, 'error', `Erro no teste: ${error.message}`);
+                console.error('❌ Erro no teste de conexão:', error);
+                return false;
+            }
+        }
+
+        function testDataAccess() {
+            addDebugStep(3, 'pending', 'Testando acesso aos dados...');
+
+            if (!restaurantsRef) {
+                addDebugStep(3, 'error', 'Referência de restaurantes não disponível');
+                return false;
+            }
+
+            try {
+                restaurantsRef.get()
+                    .then((snapshot) => {
+                        addDebugStep(3, 'success', `Dados acessados: ${snapshot.size} restaurantes encontrados`);
+                        console.log(`✅ Encontrados ${snapshot.size} restaurantes`);
+
+                        // Display restaurants
+                        displayRestaurants(snapshot.docs);
+
+                        return true;
+                    })
+                    .catch((error) => {
+                        addDebugStep(3, 'error', `Erro ao acessar dados: ${error.message}`);
+                        console.error('❌ Erro ao acessar dados:', error);
+                        return false;
+                    });
+
+            } catch (error) {
+                addDebugStep(3, 'error', `Erro no teste de acesso: ${error.message}`);
+                console.error('❌ Erro no teste de acesso:', error);
+                return false;
+            }
+        }
+
+        function testRealtimeListener() {
+            addDebugStep(4, 'pending', 'Testando listener em tempo real...');
+
+            if (!restaurantsRef) {
+                addDebugStep(4, 'error', 'Referência de restaurantes não disponível');
+                return false;
+            }
+
+            try {
+                const listener = restaurantsRef
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .onSnapshot((snapshot) => {
+                        addDebugStep(4, 'success', `Listener ativo: ${snapshot.size} restaurantes`);
+                        console.log(`📊 Listener recebeu ${snapshot.size} restaurantes`);
+
+                        // Update display
+                        displayRestaurants(snapshot.docs);
+
+                    }, (error) => {
+                        addDebugStep(4, 'error', `Erro no listener: ${error.message}`);
+                        console.error('❌ Erro no listener em tempo real:', error);
+                    });
+
+                // Store listener reference
+                window.restaurantListener = listener;
+
+                addDebugStep(4, 'success', 'Listener configurado com sucesso');
+                console.log('✅ Listener em tempo real configurado');
+
+                return true;
+
+            } catch (error) {
+                addDebugStep(4, 'error', `Erro ao configurar listener: ${error.message}`);
+                console.error('❌ Erro ao configurar listener:', error);
+                return false;
+            }
+        }
+
+        function displayRestaurants(docs) {
+            const container = document.getElementById('restaurants-list');
+            container.innerHTML = '';
+
+            if (docs.length === 0) {
+                container.innerHTML = '<p class="text-muted">Nenhum restaurante encontrado</p>';
+                return;
+            }
+
+            const list = document.createElement('div');
+            list.className = 'list-group';
+
+            docs.forEach(doc => {
+                const restaurant = doc.data();
+                const item = document.createElement('div');
+                item.className = 'list-group-item';
+                item.innerHTML = `
+                    <h6>${restaurant.name || 'Sem nome'}</h6>
+                    <small class="text-muted">
+                        ID: ${doc.id} |
+                        Preço: ${restaurant.price || 'N/A'} |
+                        Avaliação: ${restaurant.averageQuality || 0}/5 |
+                        Criado: ${restaurant.createdAt ? new Date(restaurant.createdAt.toDate ? restaurant.createdAt.toDate() : restaurant.createdAt).toLocaleString() : 'N/A'}
+                    </small>
+                `;
+                list.appendChild(item);
+            });
+
+            container.appendChild(list);
+            console.log(`📋 Exibindo ${docs.length} restaurantes na interface`);
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            console.log('🚀 Página de debug carregada');
+
+            // Clear previous debug steps
+            document.getElementById('debug-steps').innerHTML = '';
+
+            // Run tests in sequence
+            setTimeout(() => {
+                const success1 = testFirebaseInitialization();
+                if (success1) {
+                    setTimeout(() => {
+                        testFirestoreConnection();
+                    }, 1000);
+                }
+            }, 500);
+
+            setTimeout(() => {
+                testDataAccess();
+            }, 2000);
+
+            setTimeout(() => {
+                testRealtimeListener();
+            }, 3000);
+        });
+
+        // Add test restaurant function
+        window.addTestRestaurant = function() {
+            if (!restaurantsRef) {
+                alert('Firebase não inicializado');
+                return;
+            }
+
+            const name = prompt('Nome do restaurante de teste:');
+            if (!name) return;
+
+            const restaurantData = {
+                name: name,
+                hours: '12h00-23h00',
+                price: 'R$ 30-50',
+                vegetarianOptions: 'Algumas',
+                access: 'Simples',
+                description: 'Restaurant de debug',
+                averageQuality: 0,
+                totalRatings: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            restaurantsRef.add(restaurantData)
+                .then((docRef) => {
+                    console.log(`✅ Restaurante de teste adicionado: ${docRef.id}`);
+                    alert(`Restaurante adicionado com ID: ${docRef.id}`);
+                })
+                .catch((error) => {
+                    console.error('❌ Erro ao adicionar restaurante:', error);
+                    alert(`Erro: ${error.message}`);
+                });
+        };
+
+        console.log('🔍 Debug script carregado');
+    </script>
+</body>
+</html>

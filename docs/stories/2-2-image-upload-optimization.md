@@ -1,53 +1,59 @@
 # Story 2.2: Image Upload & Optimization
 
-**As a restaurant owner, I want to upload photos of my restaurant, so that users can see the establishment before visiting.**
+## Status
+Completed
 
-## Overview
-This story implements a comprehensive image upload and optimization system that allows restaurant owners to upload, preview, and optimize photos for their restaurant listings.
+## Story
+**As a** restaurant owner,
+**I want** to upload photos of my restaurant,
+**so that** users can see the establishment before visiting.
 
 ## Acceptance Criteria
+1. Support for uploading up to 4 images per restaurant
+2. File validation for JPG, PNG, WebP formats
+3. Size limitation (2MB maximum) with client-side validation
+4. Automatic image optimization using Canvas API for web display
+5. Image preview before final submission
 
-### AC 2.1: Support for uploading up to 4 images per restaurant
-- [ ] Implement multi-file upload functionality
-- [ ] Add limit enforcement for maximum 4 images
-- [ ] Create image management interface for uploaded photos
-- [ ] Add reordering functionality for uploaded images
-- [ ] Implement image replacement and removal options
-- [ ] Show image count indicator
+## Tasks / Subtasks
+- [ ] Task 1: Implement multi-file upload functionality with limit enforcement (AC: 1)
+  - [ ] Create multi-file upload functionality
+  - [ ] Add limit enforcement for maximum 4 images
+  - [ ] Create image management interface for uploaded photos
+  - [ ] Add reordering functionality for uploaded images
+  - [ ] Implement image replacement and removal options
+  - [ ] Show image count indicator
+- [ ] Task 2: Create comprehensive file validation system (AC: 2)
+  - [ ] Create client-side file type validation
+  - [ ] Accept only JPG, PNG, and WebP formats
+  - [ ] Show clear error messages for invalid file types
+  - [ ] Add file extension checking
+  - [ ] Implement MIME type validation
+  - [ ] Provide user guidance on accepted formats
+- [ ] Task 3: Implement file size validation and progress tracking (AC: 3)
+  - [ ] Implement file size validation (2MB maximum per image)
+  - [ ] Add client-side size checking before upload
+  - [ ] Show size progress indicator for large files
+  - [ ] Provide compression suggestions for oversized images
+  - [ ] Display human-readable file sizes
+  - [ ] Add batch size validation for multiple files
+- [ ] Task 4: Develop automatic image optimization system (AC: 4)
+  - [ ] Implement image compression using Canvas API
+  - [ ] Create automatic resizing for optimal web display
+  - [ ] Add quality optimization to reduce file size
+  - [ ] Implement format conversion (WebP for better compression)
+  - [ ] Create progressive loading for optimized images
+  - [ ] Add metadata stripping for privacy
+- [ ] Task 5: Create image preview and management interface (AC: 5)
+  - [ ] Create immediate preview after image selection
+  - [ ] Add zoom functionality for detailed inspection
+  - [ ] Implement image rotation and cropping tools
+  - [ ] Show optimization results (before/after comparison)
+  - [ ] Add image quality indicators
+  - [ ] Provide cancel option for unsatisfactory uploads
 
-### AC 2.2: File validation for JPG, PNG, WebP formats
-- [ ] Create client-side file type validation
-- [ ] Accept only JPG, PNG, and WebP formats
-- [ ] Show clear error messages for invalid file types
-- [ ] Add file extension checking
-- [ ] Implement MIME type validation
-- [ ] Provide user guidance on accepted formats
-
-### AC 2.3: Size限制 (2MB maximum) with client-side validation
-- [ ] Implement file size validation (2MB maximum per image)
-- [ ] Add client-side size checking before upload
-- [ ] Show size progress indicator for large files
-- [ ] Provide compression suggestions for oversized images
-- [ ] Display human-readable file sizes
-- [ ] Add batch size validation for multiple files
-
-### AC 2.4: Automatic image optimization using Canvas API for web display
-- [ ] Implement image compression using Canvas API
-- [ ] Create automatic resizing for optimal web display
-- [ ] Add quality optimization to reduce file size
-- [ ] Implement format conversion (WebP for better compression)
-- [ ] Create progressive loading for optimized images
-- [ ] Add metadata stripping for privacy
-
-### AC 2.5: Image preview before final submission
-- [ ] Create immediate preview after image selection
-- [ ] Add zoom functionality for detailed inspection
-- [ ] Implement image rotation and cropping tools
-- [ ] Show optimization results (before/after comparison)
-- [ ] Add image quality indicators
-- [ ] Provide cancel option for unsatisfactory uploads
-
-## Technical Implementation Details
+## Dev Notes
+This story implements a comprehensive image upload and optimization system that allows restaurant owners to upload, preview, and optimize photos for their restaurant listings.
 
 ### Image Upload Service
 
@@ -1156,10 +1162,48 @@ export class ImageUploadComponent {
 5. **Error Handling Test**: Test various error scenarios
 6. **Responsive Test**: Test component on different screen sizes
 
-## Notes
-- Implements comprehensive image optimization using Canvas API
-- Supports multiple image formats with automatic conversion to WebP
-- Includes real-time progress tracking and error handling
-- Provides excellent user experience with drag-and-drop support
-- Respects user's motion preferences for animations
-- Includes proper accessibility support
+### Testing
+**Testing Approach:**
+1. **File Validation Test**: Test file type and size validation
+2. **Upload Test**: Test successful image upload process
+3. **Optimization Test**: Verify image optimization works correctly
+4. **Multiple Images Test**: Test uploading multiple images
+5. **Error Handling Test**: Test various error scenarios
+6. **Responsive Test**: Test component on different screen sizes
+
+**Success Metrics:**
+- Image upload works with drag-and-drop and file selection
+- File validation prevents invalid files from being uploaded
+- Image optimization reduces file size while maintaining quality
+- Progress indicators show upload status clearly
+- Multiple images can be uploaded (up to 4)
+- Image preview works before and after optimization
+- Error handling provides clear user feedback
+
+### Dependencies
+- Story 2.1: Restaurant Registration Form (must be completed first)
+- Firebase Storage service from Epic 0
+- Canvas API for image optimization
+- File API for file handling
+
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

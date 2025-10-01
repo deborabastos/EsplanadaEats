@@ -1,798 +1,382 @@
 # Story 4.5: Documentation & Deployment
 
-## User Story
-Como administrador do sistema, eu quero documentação completa e um processo de deployment automatizado para garantir que o aplicativo possa ser facilmente mantido, escalado e implantado em produção.
+## Status
+Draft
+
+## Story
+**As a** stakeholder,
+**I want** comprehensive documentation and deployment setup,
+**so that** the application can be maintained, deployed, and scaled effectively.
 
 ## Acceptance Criteria
-- [ ] Documentação técnica completa deve ser gerada
-- [ ] Guia de instalação e configuração deve estar disponível
-- [ ] Processo de CI/CD deve ser implementado
-- [ ] Deploy automatizado para produção deve funcionar
-- [ ] Testes automatizados devem ser executados no pipeline
-- [ ] Monitoramento pós-deploy deve ser configurado
-- [ ] Documentação para usuários finais deve ser criada
-- [ ] Processo de rollback deve ser definido
+1. Complete user documentation must be created for all features
+2. Developer documentation for code architecture and setup must be provided
+3. Automated deployment pipeline must be configured
+4. Production environment must be properly set up
+5. Monitoring and logging must be implemented in production
+6. Security best practices must be implemented for deployment
+7. Backup and recovery procedures must be established
+8. Scalability and performance optimizations must be configured
 
-## Technical Implementation
+## Tasks / Subtasks
+- [ ] Task 4.5.1: Complete user documentation creation (AC: 1)
+  - [ ] Subtask 4.5.1.1: Create comprehensive user guide with step-by-step instructions
+  - [ ] Subtask 4.5.1.2: Document restaurant discovery and filtering features
+  - [ ] Subtask 4.5.1.3: Document restaurant registration process with screenshots
+  - [ ] Subtask 4.5.1.4: Document rating and review system with examples
+  - [ ] Subtask 4.5.1.5: Document photo upload and management features
+  - [ ] Subtask 4.5.1.6: Create FAQ section addressing common user questions
+  - [ ] Subtask 4.5.1.7: Document accessibility features and usage
+  - [ ] Subtask 4.5.1.8: Create troubleshooting guide for common user issues
 
-### Technical Documentation Structure
+- [ ] Task 4.5.2: Developer documentation creation (AC: 2)
+  - [ ] Subtask 4.5.2.1: Create comprehensive README with setup instructions
+  - [ ] Subtask 4.5.2.2: Document project architecture and design decisions
+  - [ ] Subtask 4.5.2.3: Create API documentation with examples
+  - [ ] Subtask 4.5.2.4: Document Firebase configuration and data structure
+  - [ ] Subtask 4.5.2.5: Create component documentation with usage examples
+  - [ ] Subtask 4.5.2.6: Document testing procedures and frameworks used
+  - [ ] Subtask 4.5.2.7: Create contribution guidelines for developers
+  - [ ] Subtask 4.5.2.8: Document coding standards and best practices
+
+- [ ] Task 4.5.3: Automated deployment pipeline configuration (AC: 3)
+  - [ ] Subtask 4.5.3.1: Setup GitHub Actions or equivalent CI/CD pipeline
+  - [ ] Subtask 4.5.3.2: Configure automated testing in deployment pipeline
+  - [ ] Subtask 4.5.3.3: Setup build and optimization processes
+  - [ ] Subtask 4.5.3.4: Configure staging environment for testing
+  - [ ] Subtask 4.5.3.5: Setup automated deployment to production
+  - [ ] Subtask 4.5.3.6: Configure rollback mechanisms for failed deployments
+  - [ ] Subtask 4.5.3.7: Setup deployment notifications and monitoring
+  - [ ] Subtask 4.5.3.8: Test end-to-end deployment pipeline
+
+- [ ] Task 4.5.4: Production environment setup (AC: 4)
+  - [ ] Subtask 4.5.4.1: Configure Firebase production project
+  - [ ] Subtask 4.5.4.2: Setup production hosting (Vercel, Netlify, or similar)
+  - [ ] Subtask 4.5.4.3: Configure custom domain and SSL certificates
+  - [ ] Subtask 4.5.4.4: Setup production environment variables
+  - [ ] Subtask 4.5.4.5: Configure Firebase security rules for production
+  - [ ] Subtask 4.5.4.6: Setup CDN and caching strategies
+  - [ ] Subtask 4.5.4.7: Configure backup and disaster recovery
+  - [ ] Subtask 4.5.4.8: Test production environment functionality
+
+- [ ] Task 4.5.5: Production monitoring and logging (AC: 5)
+  - [ ] Subtask 4.5.5.1: Configure Firebase Performance Monitoring
+  - [ ] Subtask 4.5.5.2: Setup Google Analytics for production tracking
+  - [ ] Subtask 4.5.5.3: Configure Firebase Crashlytics for error tracking
+  - [ ] Subtask 4.5.5.4: Setup custom error logging and monitoring
+  - [ ] Subtask 4.5.5.5: Configure performance metrics collection
+  - [ ] Subtask 4.5.5.6: Setup alerting for critical issues
+  - [ ] Subtask 4.5.5.7: Create monitoring dashboard
+  - [ ] Subtask 4.5.5.8: Test monitoring and alerting systems
+
+- [ ] Task 4.5.6: Security best practices implementation (AC: 6)
+  - [ ] Subtask 4.5.6.1: Audit and secure Firebase security rules
+  - [ ] Subtask 4.5.6.2: Implement rate limiting for API endpoints
+  - [ ] Subtask 4.5.6.3: Configure CORS policies for production
+  - [ ] Subtask 4.5.6.4: Setup Content Security Policy (CSP) headers
+  - [ ] Subtask 4.5.6.5: Implement authentication security best practices
+  - [ ] Subtask 4.5.6.6: Configure HTTPS and security headers
+  - [ ] Subtask 4.5.6.7: Setup vulnerability scanning and monitoring
+  - [ ] Subtask 4.5.6.8: Create security incident response plan
+
+- [ ] Task 4.5.7: Backup and recovery procedures (AC: 7)
+  - [ ] Subtask 4.5.7.1: Configure automated Firebase data backups
+  - [ ] Subtask 4.5.7.2: Setup version control and release management
+  - [ ] Subtask 4.5.7.3: Create disaster recovery documentation
+  - [ ] Subtask 4.5.7.4: Test backup and restore procedures
+  - [ ] Subtask 4.5.7.5: Configure data retention policies
+  - [ ] Subtask 4.5.7.6: Setup monitoring for backup processes
+  - [ ] Subtask 4.5.7.7: Create emergency response procedures
+  - [ ] Subtask 4.5.7.8: Document recovery time objectives (RTO/RPO)
+
+- [ ] Task 4.5.8: Scalability and performance configuration (AC: 8)
+  - [ ] Subtask 4.5.8.1: Optimize Firebase for high-traffic scenarios
+  - [ ] Subtask 4.5.8.2: Configure CDN and edge caching
+  - [ ] Subtask 4.5.8.3: Implement lazy loading and code splitting
+  - [ ] Subtask 4.5.8.4: Optimize images and static assets
+  - [ ] Subtask 4.5.8.5: Configure database indexing for performance
+  - [ ] Subtask 4.5.8.6: Setup load testing and performance benchmarks
+  - [ ] Subtask 4.5.8.7: Configure auto-scaling if applicable
+  - [ ] Subtask 4.5.8.8: Monitor and optimize Core Web Vitals
+
+## Dev Notes
+
+### Comprehensive Documentation Structure
+
 ```markdown
-# docs/technical-overview.md
+# Esplanada Eats - Complete Documentation
 
-# Visão Geral Técnica - Esplanada Eats
+## Table of Contents
 
-## Arquitetura do Sistema
+### User Documentation
+1. [Getting Started Guide](#user-guide)
+2. [Features Overview](#features)
+3. [Restaurant Discovery](#restaurant-discovery)
+4. [Restaurant Registration](#restaurant-registration)
+5. [Rating and Reviews](#ratings)
+6. [Photo Management](#photos)
+7. [Accessibility](#accessibility)
+8. [FAQ](#faq)
+9. [Troubleshooting](#troubleshooting)
 
-### Frontend
-- **Framework**: Vanilla JavaScript com arquitetura modular
-- **Estilos**: CSS com SASS/PostCSS para processamento
-- **Build Tool**: Vite para build e desenvolvimento
-- **Gerenciamento de Estados**: Client-side com Firebase
-- **Cache**: Service Workers para Progressive Web App
+### Developer Documentation
+1. [Project Overview](#overview)
+2. [Architecture](#architecture)
+3. [Setup and Installation](#setup)
+4. [API Documentation](#api)
+5. [Firebase Configuration](#firebase)
+6. [Components](#components)
+7. [Testing](#testing)
+8. [Deployment](#deployment)
+9. [Contributing](#contributing)
+10. [Code Standards](#standards)
 
-### Backend
-- **Banco de Dados**: Firebase Firestore (NoSQL)
-- **Storage**: Firebase Storage para imagens
-- **Autenticação**: Firebase Authentication (anônima)
-- **Hosting**: Firebase Hosting com CDN
-- **Functions**: Firebase Cloud Functions para lógica server-side
-
-### Infraestrutura
-- **CI/CD**: GitHub Actions para automação
-- **Monitoramento**: Google Analytics + Firebase Analytics
-- **Logging**: Console do Firebase com extensões personalizadas
-- **Segurança**: Firebase Security Rules + CORS
-- **Performance**: Cloudflare CDN + otimizações frontend
-
-## Estrutura de Pastas
-
-```
-esplanada_eats/
-├── public/                    # Arquivos estáticos
-│   ├── index.html            # Página principal
-│   ├── sw.js                 # Service Worker
-│   ├── offline.html          # Página offline
-│   └── assets/               # Imagens, fontes, etc.
-├── src/                      # Código fonte
-│   ├── js/                   # JavaScript
-│   │   ├── components/       # Componentes UI
-│   │   ├── services/         # Serviços de negócio
-│   │   ├── utils/           # Utilitários
-│   │   └── main.js          # Ponto de entrada
-│   ├── css/                  # Estilos
-│   │   ├── main.css         # CSS principal
-│   │   ├── components.css   # Estilos de componentes
-│   │   └── responsive.css   # Media queries
-│   └── img/                  # Imagens do projeto
-├── docs/                     # Documentação
-│   ├── prd.md               # Product Requirements
-│   ├── stories/             # User Stories
-│   └── technical/           # Documentação técnica
-├── tests/                   # Testes
-│   ├── unit/               # Testes unitários
-│   ├── integration/        # Testes de integração
-│   └── e2e/                # Testes end-to-end
-├── .github/                # GitHub Actions
-│   └── workflows/          # Workflows de CI/CD
-├── firebase.json           # Configuração Firebase
-├── vite.config.js          # Configuração Vite
-├── package.json            # Dependências do projeto
-└── README.md               # Documentação do projeto
+### Operations Documentation
+1. [Deployment Guide](#deployment-guide)
+2. [Monitoring](#monitoring)
+3. [Security](#security)
+4. [Backup and Recovery](#backup)
+5. [Performance Optimization](#performance)
+6. [Incident Response](#incident-response)
 ```
 
-## Componentes Principais
+### User Documentation Examples
 
-### RestaurantCard
-- **Responsabilidade**: Exibir informações básicas do restaurante
-- **Props**: restaurant (object), onClick (function)
-- **Estado**: Local (loading states, image loading)
-- **Dependências: ImageLoader, RatingDisplay**
-
-### RestaurantModal
-- **Responsabilidade**: Exibir detalhes completos do restaurante
-- **Props**: restaurant (object), onClose (function)
-- **Estado**: Local (active tab, loading states)
-- **Dependências: RatingForm, PhotoGallery**
-
-### RatingForm
-- **Responsabilidade**: Coletar avaliação do usuário
-- **Props**: restaurantId (string), onSubmit (function)
-- **Estado**: Local (form data, validation)
-- **Dependências: UserIdentifier, ImageUpload**
-
-### UserIdentifier
-- **Responsabilidade**: Identificar usuários de forma anônima
-- **Métodos**: getUserId(), generateFingerprint()
-- **Dependências: Nenhuma (browser APIs)**
-
-## Serviços
-
-### FirebaseService
-- **Responsabilidade**: Gerenciar conexão com Firebase
-- **Métodos**: initialize(), getRestaurants(), submitRating()
-- **Cache**: LocalStorage para dados offline
-
-### AnalyticsService
-- **Responsabilidade**: Rastrear eventos do usuário
-- **Métodos**: trackEvent(), trackPageView(), setUserProperties()
-- **Integração**: Google Analytics, Firebase Analytics
-
-### ImageOptimizer
-- **Responsabilidade**: Otimizar imagens antes do upload
-- **Métodos**: optimizeImage(), compressImage(), resizeImage()
-- **Configuração**: Max size 1MB, quality 80%
-
-## Fluxos de Dados
-
-### 1. Cadastro de Restaurante
-```
-Usuário → Formulário → Validação → Firebase Storage → Firebase Firestore → UI Update
-```
-
-### 2. Avaliação do Restaurante
-```
-Usuário → Modal → RatingForm → Validação → Firebase Firestore → Real-time Update → UI Update
-```
-
-### 3. Sincronização Offline
-```
-Offline → IndexedDB → Service Worker → Background Sync → Firebase → UI Update
-```
-
-## Configuração de Ambiente
-
-### Variáveis de Ambiente
-```bash
-# Firebase Configuration
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-
-# Analytics Configuration
-VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-
-# API Configuration
-VITE_API_BASE_URL=https://api.esplanadaeats.com
-```
-
-### Requisitos de Sistema
-- Node.js >= 16.0.0
-- npm >= 7.0.0
-- Firebase CLI >= 11.0.0
-- Conta Firebase com projetos configurados
-
-## Segurança
-
-### Firebase Security Rules
-```javascript
-// firestore.rules
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /restaurants/{restaurant} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if false;
-    }
-
-    match /ratings/{rating} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update: if false;
-      allow delete: if false;
-    }
-  }
-}
-```
-
-### CORS Configuration
-```javascript
-// firebase.json hosting configuration
-{
-  "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          {
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-          },
-          {
-            "key": "X-Frame-Options",
-            "value": "DENY"
-          },
-          {
-            "key": "X-XSS-Protection",
-            "value": "1; mode=block"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-## Performance
-
-### Otimizações Implementadas
-- **Lazy Loading**: Imagens carregadas sob demanda
-- **Code Splitting**: Divisão de código por rota
-- **Cache Estratégico**: Service Workers com estratégia cache-first
-- **Otimização de Imagens**: Compressão automática antes do upload
-- **Minificação**: CSS e JavaScript minificados no build
-
-### Métricas Alvo
-- First Contentful Paint: < 1.5s
-- Largest Contentful Paint: < 2.5s
-- Cumulative Layout Shift: < 0.1
-- Time to Interactive: < 3.0s
-```
-
-### Troubleshooting
-
-### Problemas Comuns
-
-1. **Firebase Connection Error**
-   - Verificar chaves de API no .env
-   - Confirmar projeto Firebase ativo
-   - Verificar regras de segurança
-
-2. **Build Errors**
-   - Limpar pasta node_modules
-   - Atualizar dependências com npm update
-   - Verificar compatibilidade de versões
-
-3. **Service Worker Issues**
-   - Limpar cache do navegador
-   - Verificar URL do service worker
-   - Testar em modo anônimo
-
-### Debug Tools
-- Firebase Console para monitoramento
-- Chrome DevTools para debugging
-- Lighthouse para análise de performance
-- Network tab para análise de requisições
-```
-
-### API Documentation
 ```markdown
-# docs/api-documentation.md
+# User Guide - Restaurant Discovery
 
-# API Documentation - Esplanada Eats
+## How to Find Restaurants
 
-## Overview
+### Step 1: Access the Restaurant List
+1. Open the Esplanada Eats application
+2. The main page displays all available restaurants
+3. Use the search bar to find specific restaurants
 
-This document describes the RESTful API endpoints and data structures used in the Esplanada Eats application.
+### Step 2: Filter Restaurants
+1. Click on the "Filter" button
+2. Select your preferred criteria:
+   - Cuisine type
+   - Price range
+   - Location
+   - Rating minimum
+3. Click "Apply Filters"
 
-## Base URL
+### Step 3: View Restaurant Details
+1. Click on any restaurant card
+2. View detailed information including:
+   - Photos and menu
+   - User ratings and reviews
+   - Operating hours
+   - Contact information
+
+### Step 4: Rate a Restaurant
+1. Click the "Rate Restaurant" button
+2. Select your rating (1-5 stars)
+3. Add a written review (optional)
+4. Upload photos (optional)
+5. Click "Submit Rating"
+
+## Frequently Asked Questions
+
+**Q: How do I report an issue with a restaurant listing?**
+A: Use the bug report button in the bottom-right corner or contact support.
+
+**Q: Can I edit my rating after submitting?**
+A: Yes, you can edit your rating within 24 hours of submission.
+
+## Troubleshooting
+
+**Problem: Restaurant photos are not loading**
+**Solution:**
+1. Check your internet connection
+2. Refresh the page
+3. Try accessing the site in a different browser
+4. If the issue persists, contact support
 ```
-https://api.esplanadaeats.com/v1
-```
+
+### Developer Documentation Examples
+
+```markdown
+# API Documentation
 
 ## Authentication
 
-Most endpoints require authentication using Firebase ID tokens. Include the token in the Authorization header:
+The application uses Firebase Authentication for user management.
 
-```
-Authorization: Bearer <firebase-id-token>
-```
+### Get Current User
+```javascript
+import { auth } from './firebase-config';
 
-## Endpoints
-
-### Restaurants
-
-#### Get All Restaurants
-```http
-GET /restaurants
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "restaurant_1",
-      "name": "Restaurante Exemplo",
-      "photoUrls": ["https://..."],
-      "averageQuality": 4.2,
-      "totalRatings": 15,
-      "createdAt": "2023-01-01T00:00:00Z",
-      "updatedAt": "2023-01-01T00:00:00Z"
-    }
-  ]
+const currentUser = auth.currentUser;
+if (currentUser) {
+  console.log('User ID:', currentUser.uid);
 }
 ```
 
-#### Get Restaurant by ID
-```http
-GET /restaurants/{id}
-```
+## Restaurant API
 
-#### Create Restaurant
-```http
-POST /restaurants
-```
+### Get Restaurants
+```javascript
+import { getDocs, collection, query, orderBy } from 'firebase/firestore';
 
-**Request Body:**
-```json
-{
-  "name": "Novo Restaurante",
-  "photoUrls": ["https://..."]
+async function getRestaurants() {
+  const q = query(
+    collection(db, 'restaurants'),
+    orderBy('name', 'asc')
+  );
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 }
 ```
 
-### Ratings
+### Add Restaurant
+```javascript
+import { addDoc, collection } from 'firebase/firestore';
 
-#### Get Restaurant Ratings
-```http
-GET /restaurants/{id}/ratings
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "rating_1",
-      "restaurantId": "restaurant_1",
-      "quality": 5,
-      "comment": "Ótimo restaurante!",
-      "photoUrls": ["https://..."],
-      "timestamp": "2023-01-01T00:00:00Z"
-    }
-  ]
-}
-```
-
-#### Submit Rating
-```http
-POST /ratings
-```
-
-**Request Body:**
-```json
-{
-  "restaurantId": "restaurant_1",
-  "quality": 5,
-  "comment": "Ótimo restaurante!",
-  "photoUrls": ["https://..."]
-}
-```
-
-### Analytics
-
-#### Track Event
-```http
-POST /analytics/events
-```
-
-**Request Body:**
-```json
-{
-  "event": "page_view",
-  "parameters": {
-    "page": "/restaurants",
-    "user_id": "user_123"
+async function addRestaurant(restaurantData) {
+  try {
+    const docRef = await addDoc(collection(db, 'restaurants'), {
+      ...restaurantData,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding restaurant:', error);
+    throw error;
   }
 }
 ```
 
-#### Get Dashboard Data
-```http
-GET /analytics/dashboard
-```
+## Rating API
 
-## Error Responses
+### Submit Rating
+```javascript
+import { addDoc, collection } from 'firebase/firestore';
 
-All endpoints return errors in the following format:
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "INVALID_REQUEST",
-    "message": "Invalid request parameters"
+async function submitRating(ratingData) {
+  try {
+    const docRef = await addDoc(collection(db, 'ratings'), {
+      ...ratingData,
+      createdAt: new Date()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error submitting rating:', error);
+    throw error;
   }
 }
 ```
-
-### Error Codes
-- `INVALID_REQUEST`: Malformed request
-- `UNAUTHORIZED`: Missing or invalid authentication
-- `FORBIDDEN`: Insufficient permissions
-- `NOT_FOUND`: Resource not found
-- `INTERNAL_ERROR`: Server error
 ```
 
-### CI/CD Pipeline
+### Deployment Pipeline Configuration
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run linting
-      run: npm run lint
+      - name: Run tests
+        run: npm test
 
-    - name: Run unit tests
-      run: npm run test:unit
+      - name: Run linting
+        run: npm run lint
 
-    - name: Run integration tests
-      run: npm run test:integration
+      - name: Build application
+        run: npm run build
 
-    - name: Build application
-      run: npm run build
-
-    - name: Run E2E tests
-      run: npm run test:e2e
-      if: github.event_name == 'pull_request'
-
-  deploy:
+  deploy-staging:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
+    environment: staging
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build application
-      run: npm run build
+      - name: Build for staging
+        run: npm run build:staging
 
-    - name: Deploy to Firebase
-      uses: w9jds/firebase-action@master
-      with:
-        args: deploy --only hosting
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy to staging
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}'
+          channelId: live
+          projectId: esplanada-eats-staging
 
-    - name: Run post-deploy tests
-      run: npm run test:smoke
-      if: always()
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
 
-    - name: Notify deployment
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-      if: always()
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build:production
+
+      - name: Deploy to production
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROD }}'
+          channelId: live
+          projectId: esplanada-eats-prod
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
-### Deployment Scripts
-```javascript
-# scripts/deploy.js
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+### Firebase Production Configuration
 
-class DeploymentManager {
-  constructor() {
-    this.version = this.getVersion();
-    this.environment = process.env.NODE_ENV || 'development';
-  }
-
-  getVersion() {
-    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-    return packageJson.version;
-  }
-
-  async preDeploy() {
-    console.log('🚀 Starting pre-deployment checks...');
-
-    // Run tests
-    console.log('🧪 Running tests...');
-    execSync('npm test', { stdio: 'inherit' });
-
-    // Build application
-    console.log('🔨 Building application...');
-    execSync('npm run build', { stdio: 'inherit' });
-
-    // Generate version info
-    this.generateVersionInfo();
-
-    console.log('✅ Pre-deployment checks completed');
-  }
-
-  async deploy() {
-    console.log('🚀 Starting deployment...');
-
-    try {
-      // Deploy to Firebase
-      console.log('📦 Deploying to Firebase...');
-      execSync('firebase deploy --only hosting', { stdio: 'inherit' });
-
-      // Run smoke tests
-      console.log('🔍 Running smoke tests...');
-      await this.runSmokeTests();
-
-      // Notify team
-      console.log('📧 Sending deployment notification...');
-      await this.notifyTeam();
-
-      console.log('✅ Deployment completed successfully');
-    } catch (error) {
-      console.error('❌ Deployment failed:', error);
-      await this.notifyTeam(error);
-      process.exit(1);
-    }
-  }
-
-  generateVersionInfo() {
-    const versionInfo = {
-      version: this.version,
-      environment: this.environment,
-      deployedAt: new Date().toISOString(),
-      commit: process.env.GITHUB_SHA || 'local',
-      branch: process.env.GITHUB_REF || 'local'
-    };
-
-    fs.writeFileSync(
-      path.join('dist', 'version.json'),
-      JSON.stringify(versionInfo, null, 2)
-    );
-  }
-
-  async runSmokeTests() {
-    // Basic smoke tests to verify deployment
-    const tests = [
-      'https://esplanadaeats.com',
-      'https://esplanadaeats.com/offline.html'
-    ];
-
-    for (const url of tests) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status} for ${url}`);
-        }
-        console.log(`✅ ${url} - OK`);
-      } catch (error) {
-        console.error(`❌ ${url} - Failed:`, error.message);
-        throw error;
-      }
-    }
-  }
-
-  async notifyTeam(error = null) {
-    const webhookUrl = process.env.SLACK_WEBHOOK;
-    if (!webhookUrl) return;
-
-    const message = {
-      text: error ? '❌ Deployment Failed' : '✅ Deployment Successful',
-      attachments: [{
-        color: error ? 'danger' : 'good',
-        fields: [
-          {
-            title: 'Version',
-            value: this.version,
-            short: true
-          },
-          {
-            title: 'Environment',
-            value: this.environment,
-            short: true
-          },
-          {
-            title: 'Time',
-            value: new Date().toLocaleString(),
-            short: true
-          }
-        ]
-      }]
-    };
-
-    if (error) {
-      message.attachments[0].fields.push({
-        title: 'Error',
-        value: error.message,
-        short: false
-      });
-    }
-
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message)
-    });
-  }
-
-  async rollback() {
-    console.log('🔄 Starting rollback...');
-
-    try {
-      // Rollback to previous version
-      execSync('firebase deploy --only hosting --version=previous', { stdio: 'inherit' });
-
-      console.log('✅ Rollback completed');
-    } catch (error) {
-      console.error('❌ Rollback failed:', error);
-      process.exit(1);
-    }
-  }
-}
-
-// CLI usage
-if (require.main === module) {
-  const command = process.argv[2];
-  const manager = new DeploymentManager();
-
-  switch (command) {
-    case 'pre-deploy':
-      manager.preDeploy();
-      break;
-    case 'deploy':
-      manager.deploy();
-      break;
-    case 'rollback':
-      manager.rollback();
-      break;
-    default:
-      console.log('Usage: node deploy.js [pre-deploy|deploy|rollback]');
-      process.exit(1);
-  }
-}
-
-module.exports = DeploymentManager;
-```
-
-### User Documentation
-```markdown
-# docs/user-guide.md
-
-# Guia do Usuário - Esplanada Eats
-
-## Bem-vindo ao Esplanada Eats!
-
-O Esplanada Eats é um aplicativo para descobrir e avaliar restaurantes na sua região. Este guia vai ajudar você a aproveitar ao máximo todas as funcionalidades.
-
-## Primeiros Passos
-
-### Acessando o Aplicativo
-1. Abra seu navegador e acesse: https://esplanadaeats.com
-2. O aplicativo funciona diretamente no navegador - não precisa instalar nada!
-
-### Navegação Básica
-- **Página Inicial**: Lista todos os restaurantes cadastrados
-- **Filtros**: Use os filtros para encontrar restaurantes específicos
-- **Busca**: Procure por nome do restaurante
-
-## Funcionalidades
-
-### Visualizar Restaurantes
-- **Cards**: Cada restaurante é mostrado em um card com foto e avaliação média
-- **Detalhes**: Clique em qualquer card para ver informações completas
-- **Fotos**: Veja fotos do ambiente e pratos
-
-### Avaliar Restaurantes
-1. Abra o restaurante que você quer avaliar
-2. Role para baixo até encontrar o formulário de avaliação
-3. Dê sua nota de 1 a 5 estrelas
-4. (Opcional) Adicione um comentário sobre sua experiência
-5. (Opcional) Adicione até 2 fotos
-6. Clique em "Enviar avaliação"
-
-#### Importante
-- Você só pode avaliar cada restaurante uma vez
-- Suas avaliações são anônimas
-- As notas são calculadas em tempo real
-
-### Adicionar Novos Restaurantes
-1. Clique no botão "Adicionar Restaurante"
-2. Preencha as informações básicas:
-   - Nome do restaurante (mínimo 4 caracteres)
-   - Fotos (opcional, máximo 4)
-3. Clique em "Salvar"
-
-## Funcionalidades Avançadas
-
-### Modo Offline
-- O aplicativo funciona mesmo sem internet!
-- Restaurantes já visitados ficam disponíveis offline
-- Avaliações feitas offline são sincronizadas quando você voltar a ter conexão
-
-### Dispositivos Móveis
-- O aplicativo é totalmente responsivo
-- Funciona perfeitamente em celulares e tablets
-- Toque duplo em fotos para ampliar
-- Deslize para fechar modais
-
-### Segurança e Privacidade
-- Suas informações são protegidas
-- Não coletamos dados pessoais identificáveis
-- Avaliações são anônimas por padrão
-
-## Dicas e Truques
-
-### Economizando Dados
-- Fotos são otimizadas automaticamente
-- O aplicativo funciona bem mesmo com conexão lenta
-- Você pode usar o modo offline para economizar dados
-
-### Encontrando os Melhores Restaurantes
-- Procure por restaurantes com muitas avaliações
-- Leia os comentários para ter uma ideia melhor
-- Fotos ajudam a conhecer o ambiente antes de visitar
-
-## Problemas Comuns
-
-### O Aplicativo Não Carrega
-- Verifique sua conexão com a internet
-- Tente recarregar a página (F5)
-- Limpe o cache do navegador
-
-### Não Consigo Avaliar
-- Verifique se você já avaliou este restaurante antes
-- Certifique-se de que deu uma nota (1-5 estrelas)
-- Tente novamente em alguns minutos
-
-### Fotos Não Carregam
-- Verifique sua conexão
-- Tente enviar fotos menores (menos de 1MB)
-- Formatos suportados: JPG, PNG, WebP
-
-## Contato e Suporte
-
-Precisa de ajuda? Entre em contato:
-- **Email**: suporte@esplanadaeats.com
-- **Horário**: Segunda a Sexta, 9h às 18h
-- **Tempo de resposta**: Até 24 horas úteis
-
-## Atualizações
-
-O aplicativo é atualizado regularmente com:
-- Novos restaurantes
-- Melhorias de performance
-- Correção de bugs
-- Novas funcionalidades
-
-Fique atento às novidades!
-```
-
-### Final Configuration Files
 ```json
-# firebase.json
 {
   "hosting": {
     "public": "dist",
@@ -802,6 +386,24 @@ Fique atento às novidades!
       "**/node_modules/**"
     ],
     "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|png|gif|webp)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
+      },
       {
         "source": "**",
         "headers": [
@@ -818,112 +420,626 @@ Fique atento às novidades!
             "value": "1; mode=block"
           },
           {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000"
-          }
-        ]
-      },
-      {
-        "source": "**/*.html",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=3600"
-          }
-        ]
-      },
-      {
-        "source": "/sw.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=0"
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
           }
         ]
       }
     ],
-    "rewrites": [
+    "redirects": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/",
+        "destination": "/index.html",
+        "type": 301
+      },
+      {
+        "source": "/restaurants",
+        "destination": "/index.html",
+        "type": 301
+      },
+      {
+        "source": "/rate",
+        "destination": "/index.html",
+        "type": 301
       }
     ]
   },
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "firestore.rules"
   },
   "storage": {
     "rules": "storage.rules"
-  },
-  "functions": {
-    "source": "functions"
   }
 }
 ```
 
-```javascript
-# vite.config.js
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+### Production Security Rules
 
-export default defineConfig({
-  base: '/',
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: process.env.NODE_ENV === 'development',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['firebase'],
-          utils: ['./src/js/utils/index.js'],
-          components: ['./src/js/components/index.js']
-        }
-      }
-    },
-    chunkSizeWarningLimit: 1000
-  },
-  server: {
-    port: 3000,
-    open: true
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
-      '@components': resolve(__dirname, 'src/js/components'),
-      '@services': resolve(__dirname, 'src/js/services'),
-      '@utils': resolve(__dirname, 'src/js/utils')
+```javascript
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Restaurants collection
+    match /restaurants/{restaurantId} {
+      allow read: if true;
+      allow create: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.resource.data.keys().hasAll(['name', 'address', 'cuisine']);
+      allow update: if request.auth != null &&
+        request.auth.uid == resource.data.ownerId;
+      allow delete: if request.auth != null &&
+        request.auth.uid == resource.data.ownerId;
     }
-  },
-  define: {
-    'process.env': process.env,
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0')
+
+    // Ratings collection
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create: if request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.resource.data.rating >= 1 &&
+        request.resource.data.rating <= 5 &&
+        request.resource.data.keys().hasAll(['restaurantId', 'rating', 'userId']);
+      allow update: if request.auth != null &&
+        request.auth.uid == resource.data.userId &&
+        request.time < resource.data.createdAt + 86400000; // 24 hours
+      allow delete: if request.auth != null &&
+        request.auth.uid == resource.data.userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if request.auth != null &&
+        request.auth.uid == userId;
+    }
   }
-});
+}
 ```
 
-## Dependencies
-- **Story 4.4**: Analytics & Monitoring for deployment monitoring
-- **Story 0.1**: Firebase Project Configuration for deployment setup
-- **Story 1.1**: Project Setup & Basic Structure for project structure
+### Monitoring and Analytics Setup
 
-## Testing Checklist
-- [ ] All documentation is generated and accessible
-- [ ] CI/CD pipeline runs successfully
-- [ ] Deployment to staging works
-- [ ] Deployment to production works
-- [ ] Rollback procedure works
-- [ ] Post-deploy tests pass
-- [ ] Documentation is comprehensive
-- [ ] All team members can deploy
-- [ ] Monitoring is configured
-- [ ] Security is configured
+```javascript
+// js/monitoring.js
+import { initializeApp } from 'firebase/app';
+import { getPerformance } from 'firebase/performance';
+import { getAnalytics } from 'firebase/analytics';
+import { getAuth } from 'firebase/auth';
 
-## Notes
-- Esta história finaliza o projeto com documentação completa e processo de deployment
-- A documentação cobre aspectos técnicos e de usuário
-- O processo de CI/CD é automatizado e confiável
-- O deploy é seguro e monitorado
-- A equipe tem todos os recursos necessários para manter o projeto
-- O projeto está pronto para produção
+class ProductionMonitoring {
+  constructor() {
+    this.app = null;
+    this.analytics = null;
+    this.performance = null;
+    this.auth = null;
+
+    this.initialize();
+  }
+
+  async initialize() {
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "your-production-api-key",
+      authDomain: "esplanada-eats-prod.firebaseapp.com",
+      projectId: "esplanada-eats-prod",
+      storageBucket: "esplanada-eats-prod.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "your-production-app-id",
+      measurementId: "your-measurement-id"
+    };
+
+    this.app = initializeApp(firebaseConfig);
+    this.analytics = getAnalytics(this.app);
+    this.performance = getPerformance(this.app);
+    this.auth = getAuth(this.app);
+
+    // Setup monitoring
+    this.setupPerformanceMonitoring();
+    this.setupErrorTracking();
+    this.setupUserAnalytics();
+  }
+
+  setupPerformanceMonitoring() {
+    // Monitor page load performance
+    if ('performance' in window) {
+      window.addEventListener('load', () => {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        const metrics = {
+          loadTime: navigation.loadEventEnd - navigation.loadEventStart,
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          firstPaint: performance.getEntriesByType('paint')[0]?.startTime || 0,
+          firstContentfulPaint: performance.getEntriesByType('paint')[1]?.startTime || 0
+        };
+
+        this.trackPerformanceMetrics(metrics);
+      });
+    }
+  }
+
+  setupErrorTracking() {
+    // Track JavaScript errors
+    window.addEventListener('error', (event) => {
+      this.trackError('javascript_error', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        stack: event.error?.stack
+      });
+    });
+
+    // Track unhandled promise rejections
+    window.addEventListener('unhandledrejection', (event) => {
+      this.trackError('promise_rejection', {
+        reason: event.reason?.message || event.reason,
+        stack: event.reason?.stack
+      });
+    });
+  }
+
+  setupUserAnalytics() {
+    // Track user behavior
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('button, a, .restaurant-card');
+      if (target) {
+        this.trackUserInteraction('click', {
+          element: target.tagName.toLowerCase(),
+          id: target.id,
+          class: target.className,
+          text: target.textContent?.trim().substring(0, 50)
+        });
+      }
+    });
+
+    // Track page views
+    this.trackPageView(window.location.pathname);
+  }
+
+  trackPerformanceMetrics(metrics) {
+    // Send to Firebase Performance Monitoring
+    if (this.performance) {
+      const trace = this.performance.trace('page_load');
+      trace.putMetric('load_time', metrics.loadTime);
+      trace.putMetric('dom_content_loaded', metrics.domContentLoaded);
+      trace.putMetric('first_paint', metrics.firstPaint);
+      trace.putMetric('first_contentful_paint', metrics.firstContentfulPaint);
+      trace.stop();
+    }
+
+    // Send to Google Analytics
+    if (this.analytics) {
+      // GA4 custom event for performance
+      this.analytics.logEvent('performance_metrics', metrics);
+    }
+  }
+
+  trackError(type, error) {
+    // Send to Google Analytics
+    if (this.analytics) {
+      this.analytics.logEvent('error', {
+        type: type,
+        message: error.message,
+        filename: error.filename
+      });
+    }
+
+    // Send to error tracking service
+    this.sendToErrorTrackingService({
+      type: type,
+      error: error,
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent,
+      url: window.location.href
+    });
+  }
+
+  trackUserInteraction(action, data) {
+    if (this.analytics) {
+      this.analytics.logEvent('user_interaction', {
+        action: action,
+        ...data
+      });
+    }
+  }
+
+  trackPageView(path) {
+    if (this.analytics) {
+      this.analytics.logEvent('page_view', {
+        page_path: path
+      });
+    }
+  }
+
+  async sendToErrorTrackingService(errorData) {
+    try {
+      const response = await fetch('/api/errors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(errorData)
+      });
+
+      if (!response.ok) {
+        console.warn('Failed to send error to tracking service');
+      }
+    } catch (error) {
+      console.warn('Error sending error to tracking service:', error);
+    }
+  }
+}
+
+// Initialize monitoring in production
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  window.productionMonitoring = new ProductionMonitoring();
+}
+```
+
+### Security Configuration
+
+```javascript
+// js/security.js
+class SecurityManager {
+  constructor() {
+    this.setupSecurityHeaders();
+    this.setupContentSecurityPolicy();
+    this.setupXSSProtection();
+    this.setupCSRFProtection();
+  }
+
+  setupSecurityHeaders() {
+    // These would typically be set at the server level
+    // but we can add client-side security measures
+    this.preventClickjacking();
+    this.setupSecureCookies();
+  }
+
+  preventClickjacking() {
+    // Prevent clickjacking attacks
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+  }
+
+  setupContentSecurityPolicy() {
+    // Client-side CSP violation reporting
+    if ('SecurityPolicyViolationEvent' in window) {
+      document.addEventListener('securitypolicyviolation', (event) => {
+        this.reportSecurityViolation(event);
+      });
+    }
+  }
+
+  setupXSSProtection() {
+    // Sanitize user inputs
+    this.setupInputSanitization();
+    this.setupOutputEncoding();
+  }
+
+  setupInputSanitization() {
+    // Sanitize form inputs before processing
+    document.addEventListener('submit', (event) => {
+      const form = event.target;
+      const inputs = form.querySelectorAll('input, textarea');
+
+      inputs.forEach(input => {
+        if (input.type !== 'password') {
+          input.value = this.sanitizeInput(input.value);
+        }
+      });
+    });
+  }
+
+  sanitizeInput(input) {
+    return input
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
+  }
+
+  setupOutputEncoding() {
+    // Ensure all dynamic content is properly encoded
+    this.setupSafeHTMLRendering();
+  }
+
+  setupSafeHTMLRendering() {
+    // Override innerHTML usage with safe alternatives
+    const originalSetAttribute = Element.prototype.setAttribute;
+    Element.prototype.setAttribute = function(name, value) {
+      if (name === 'href' || name === 'src') {
+        value = this.sanitizeURL(value);
+      }
+      return originalSetAttribute.call(this, name, value);
+    };
+  }
+
+  sanitizeURL(url) {
+    try {
+      const parsed = new URL(url, window.location.origin);
+      // Only allow http, https, and relative URLs
+      if (['http:', 'https:'].includes(parsed.protocol) || !parsed.protocol) {
+        return parsed.toString();
+      }
+    } catch (e) {
+      // Invalid URL
+    }
+    return '#';
+  }
+
+  setupCSRFProtection() {
+    // Generate and validate CSRF tokens for API requests
+    this.generateCSRFToken();
+  }
+
+  generateCSRFToken() {
+    const token = this.generateRandomToken();
+    localStorage.setItem('csrf_token', token);
+
+    // Add token to all form submissions
+    document.addEventListener('submit', (event) => {
+      const form = event.target;
+      const tokenInput = document.createElement('input');
+      tokenInput.type = 'hidden';
+      tokenInput.name = 'csrf_token';
+      tokenInput.value = token;
+      form.appendChild(tokenInput);
+    });
+  }
+
+  generateRandomToken() {
+    return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  reportSecurityViolation(event) {
+    // Report CSP violations to monitoring service
+    const violation = {
+      blockedURI: event.blockedURI,
+      documentURI: event.documentURI,
+      effectiveDirective: event.effectiveDirective,
+      originalPolicy: event.originalPolicy,
+      referrer: event.referrer,
+      sourceFile: event.sourceFile,
+      timeStamp: event.timeStamp,
+      userAgent: navigator.userAgent
+    };
+
+    this.sendSecurityViolation(violation);
+  }
+
+  async sendSecurityViolation(violation) {
+    try {
+      const response = await fetch('/api/security-violations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(violation)
+      });
+
+      if (!response.ok) {
+        console.warn('Failed to report security violation');
+      }
+    } catch (error) {
+      console.warn('Error reporting security violation:', error);
+    }
+  }
+}
+
+// Initialize security manager
+window.securityManager = new SecurityManager();
+```
+
+### Backup and Recovery Scripts
+
+```bash
+#!/bin/bash
+# scripts/backup-firebase.sh
+
+# Firebase Backup Script
+# Usage: ./backup-firebase.sh [staging|production]
+
+ENVIRONMENT=${1:-staging}
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+BACKUP_DIR="./backups/${ENVIRONMENT}"
+PROJECT_ID="esplanada-eats-${ENVIRONMENT}"
+
+echo "Starting Firebase backup for ${ENVIRONMENT} environment..."
+
+# Create backup directory
+mkdir -p ${BACKUP_DIR}
+
+# Export Firestore data
+echo "Exporting Firestore data..."
+firebase firestore:export --project ${PROJECT_ID} ${BACKUP_DIR}/firestore_${TIMESTAMP}
+
+# Export Storage files
+echo "Exporting Storage files..."
+gsutil -m rsync -r gs://${PROJECT_ID}.appspot.com ${BACKUP_DIR}/storage_${TIMESTAMP}
+
+# Compress backups
+echo "Compressing backups..."
+tar -czf ${BACKUP_DIR}/firebase_backup_${TIMESTAMP}.tar.gz -C ${BACKUP_DIR} firestore_${TIMESTAMP} storage_${TIMESTAMP}
+
+# Clean up uncompressed directories
+rm -rf ${BACKUP_DIR}/firestore_${TIMESTAMP}
+rm -rf ${BACKUP_DIR}/storage_${TIMESTAMP}
+
+# Keep only last 30 backups
+cd ${BACKUP_DIR}
+ls -t firebase_backup_*.tar.gz | tail -n +31 | xargs -r rm
+
+echo "Backup completed: firebase_backup_${TIMESTAMP}.tar.gz"
+```
+
+### Performance Optimization
+
+```javascript
+// js/performance-optimizer.js
+class PerformanceOptimizer {
+  constructor() {
+    this.setupLazyLoading();
+    this.setupCodeSplitting();
+    this.setupImageOptimization();
+    this.setupCaching();
+    this.setupServiceWorker();
+  }
+
+  setupLazyLoading() {
+    // Lazy load images
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+            imageObserver.unobserve(img);
+          }
+        });
+      });
+
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    }
+  }
+
+  setupCodeSplitting() {
+    // Dynamic import for non-critical modules
+    this.loadModulesOnDemand();
+  }
+
+  loadModulesOnDemand() {
+    // Load rating module only when needed
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-load-module="rating"]')) {
+        import('./modules/rating.js').then(module => {
+          module.initRatingSystem();
+        });
+      }
+
+      if (e.target.closest('[data-load-module="restaurant-form"]')) {
+        import('./modules/restaurant-form.js').then(module => {
+          module.initRestaurantForm();
+        });
+      }
+    });
+  }
+
+  setupImageOptimization() {
+    // Optimize image loading
+    this.setupResponsiveImages();
+    this.setupWebPSupport();
+  }
+
+  setupResponsiveImages() {
+    // Create responsive image elements
+    document.querySelectorAll('img[data-srcset]').forEach(img => {
+      const srcset = img.dataset.srcset;
+      const sources = srcset.split(',').map(source => {
+        const [url, descriptor] = source.trim().split(' ');
+        return `<source srcset="${url}" media="(max-width: ${descriptor.replace('w', 'px')})">`;
+      }).join('');
+
+      const picture = document.createElement('picture');
+      picture.innerHTML = sources + `<img src="${img.dataset.src}" alt="${img.alt}">`;
+      img.parentNode.replaceChild(picture, img);
+    });
+  }
+
+  setupWebPSupport() {
+    // Use WebP if supported
+    if (this.supportsWebP()) {
+      document.querySelectorAll('img[data-webp]').forEach(img => {
+        img.src = img.dataset.webp;
+      });
+    }
+  }
+
+  supportsWebP() {
+    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0;
+  }
+
+  setupCaching() {
+    // Setup application cache strategies
+    this.setupApplicationCache();
+  }
+
+  setupApplicationCache() {
+    // Cache critical resources
+    const criticalResources = [
+      '/styles/main.css',
+      '/js/main.js',
+      '/js/firebase-config.js',
+      '/images/logo.png'
+    ];
+
+    criticalResources.forEach(resource => {
+      this.cacheResource(resource);
+    });
+  }
+
+  cacheResource(url) {
+    if ('caches' in window) {
+      caches.open('esplanada-eats-v1').then(cache => {
+        cache.add(url);
+      });
+    }
+  }
+
+  setupServiceWorker() {
+    // Register service worker for offline support
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(registration => {
+        console.log('ServiceWorker registration successful');
+      }).catch(error => {
+        console.log('ServiceWorker registration failed');
+      });
+    }
+  }
+}
+
+// Initialize performance optimizer
+window.performanceOptimizer = new PerformanceOptimizer();
+```
+
+### Dependencies
+- All previous stories for comprehensive documentation
+- Story 4.1: Responsive Design Refinement (for deployment requirements)
+- Story 4.3: Browser Compatibility Testing (for deployment testing)
+- Story 4.4: Analytics & Monitoring (for production monitoring)
+
+### Testing
+- Complete user documentation is accurate and comprehensive
+- Developer documentation covers all aspects of the system
+- Automated deployment pipeline functions correctly
+- Production environment is fully configured and secure
+- Monitoring and alerting systems are operational
+- Security measures are implemented and tested
+- Backup and recovery procedures work correctly
+- Application performs well under load in production
+
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

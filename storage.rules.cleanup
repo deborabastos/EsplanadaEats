@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // TEMPORARY ADMIN RULES FOR CLEANUP
+    // WARNING: These rules allow full access to all storage
+    // Replace with original rules after cleanup is complete
+
+    match /{allPaths=**} {
+      allow read, write, delete: if true; // Full admin access for cleanup
+    }
+  }
+}

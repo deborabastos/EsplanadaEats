@@ -1,60 +1,68 @@
 # Story 2.4: Form Validation & Error Handling
 
-**As a user, I want clear feedback when form data is invalid, so that I can correct errors and complete my submission.**
+## Status
+Draft
 
-## Overview
-This story implements comprehensive form validation and error handling for all forms in the application, providing real-time feedback, visual indicators, and helpful error messages to guide users through successful form completion.
+## Story
+**As a** user,
+**I want** clear feedback when form data is invalid,
+**so that** I can correct errors and complete my submission.
 
 ## Acceptance Criteria
+1. Real-time validation for all form fields
+2. Specific error messages for each validation failure
+3. Visual feedback (red borders, error icons) for invalid fields
+4. Form submission blocked until all mandatory fields are valid
+5. Graceful handling of storage quota exceeded scenarios
 
-### AC 4.1: Real-time validation for all form fields
-- [ ] Implement real-time validation for restaurant registration form fields
-- [ ] Implement real-time validation for rating form fields
-- [ ] Add input event listeners for instant validation feedback
-- [ ] Include blur event validation for final field validation
-- [ ] Support validation on form submission
-- [ ] Provide immediate visual feedback for validation state
-- [ ] Include validation for all field types (text, numbers, select, file)
+## Tasks / Subtasks
+- [ ] Task 1: Implement real-time validation system (AC: 1)
+  - [ ] Implement real-time validation for restaurant registration form fields
+  - [ ] Implement real-time validation for rating form fields
+  - [ ] Add input event listeners for instant validation feedback
+  - [ ] Include blur event validation for final field validation
+  - [ ] Support validation on form submission
+  - [ ] Provide immediate visual feedback for validation state
+  - [ ] Include validation for all field types (text, numbers, select, file)
+- [ ] Task 2: Create specific error messaging system (AC: 2)
+  - [ ] Create specific error messages for restaurant name validation
+  - [ ] Create specific error messages for operating hours validation
+  - [ ] Create specific error messages for price range validation
+  - [ ] Create specific error messages for rating validation
+  - [ ] Create specific error messages for file upload validation
+  - [ ] Include contextual error messages based on field requirements
+  - [ ] Support localized error messages in Portuguese
+  - [ ] Include helpful suggestions for correcting errors
+- [ ] Task 3: Implement visual feedback indicators (AC: 3)
+  - [ ] Add red border styling for invalid form fields
+  - [ ] Include error icons next to invalid fields
+  - [ ] Implement success indicators for valid fields
+  - [ ] Add color transitions for validation state changes
+  - [ ] Include visual feedback for focused invalid fields
+  - [ ] Support consistent styling across all forms
+  - [ ] Add appropriate spacing for error indicators
+  - [ ] Include hover states for interactive error elements
+- [ ] Task 4: Create form submission control system (AC: 4)
+  - [ ] Implement form submission validation before processing
+  - [ ] Disable submit button when form has validation errors
+  - [ ] Show summary of validation errors on submission attempt
+  - [ ] Scroll to first invalid field on submission failure
+  - [ ] Include progress indication for form completion
+  - [ ] Support conditional validation based on field dependencies
+  - [ ] Handle edge cases like partially completed forms
+  - [ ] Include user-friendly error recovery flows
+- [ ] Task 5: Develop storage quota handling (AC: 5)
+  - [ ] Implement localStorage quota monitoring
+  - [ ] Add error handling for quota exceeded scenarios
+  - [ ] Provide clear error messages for storage limitations
+  - [ ] Include suggestions for freeing up storage space
+  - [ ] Implement graceful degradation when storage is full
+  - [ ] Support data cleanup options for users
+  - [ ] Include warning messages before storage limits are reached
+  - [ ] Add recovery mechanisms for corrupted data scenarios
 
-### AC 4.2: Specific error messages for each validation failure
-- [ ] Create specific error messages for restaurant name validation
-- [ ] Create specific error messages for operating hours validation
-- [ ] Create specific error messages for price range validation
-- [ ] Create specific error messages for rating validation
-- [ ] Create specific error messages for file upload validation
-- [ ] Include contextual error messages based on field requirements
-- [ ] Support localized error messages in Portuguese
-- [ ] Include helpful suggestions for correcting errors
-
-### AC 4.3: Visual feedback (red borders, error icons) for invalid fields
-- [ ] Add red border styling for invalid form fields
-- [ ] Include error icons next to invalid fields
-- [ ] Implement success indicators for valid fields
-- [ ] Add color transitions for validation state changes
-- [ ] Include visual feedback for focused invalid fields
-- [ ] Support consistent styling across all forms
-- [ ] Add appropriate spacing for error indicators
-- [ ] Include hover states for interactive error elements
-
-### AC 4.4: Form submission blocked until all mandatory fields are valid
-- [ ] Implement form submission validation before processing
-- [ ] Disable submit button when form has validation errors
-- [ ] Show summary of validation errors on submission attempt
-- [ ] Scroll to first invalid field on submission failure
-- [ ] Include progress indication for form completion
-- [ ] Support conditional validation based on field dependencies
-- [ ] Handle edge cases like partially completed forms
-- [ ] Include user-friendly error recovery flows
-
-### AC 4.5: Graceful handling of storage quota exceeded scenarios
-- [ ] Implement localStorage quota monitoring
-- [ ] Add error handling for quota exceeded scenarios
-- [ ] Provide clear error messages for storage limitations
-- [ ] Include suggestions for freeing up storage space
-- [ ] Implement graceful degradation when storage is full
-- [ ] Support data cleanup options for users
-- [ ] Include warning messages before storage limits are reached
-- [ ] Add recovery mechanisms for corrupted data scenarios
+## Dev Notes
+This story implements comprehensive form validation and error handling for all forms in the application, providing real-time feedback, visual indicators, and helpful error messages to guide users through successful form completion.
 
 ## Technical Implementation Details
 
@@ -946,21 +954,8 @@ export class FormValidationUI {
 }
 ```
 
-## Dependencies
-- Story 2.1: Restaurant Registration Form (for restaurant form validation)
-- Story 3.2: Rating Form & Interface (for rating form validation)
-- Story 1.4: Modal Framework (for modal form validation)
-- CSS validation styles from previous stories
-
-## Success Metrics
-- All forms have real-time validation with visual feedback
-- Users receive clear, specific error messages for validation failures
-- Form submission is blocked until all mandatory fields are valid
-- Storage quota errors are handled gracefully with helpful messages
-- Form validation works across all supported browsers and devices
-- Accessibility requirements are met for validation states
-
-## Testing Approach
+### Testing
+**Testing Approach:**
 1. **Real-time Validation Test**: Test validation on input, blur, and form submission
 2. **Error Message Test**: Verify error messages are clear and helpful
 3. **Visual Feedback Test**: Test visual indicators for valid/invalid states
@@ -970,11 +965,38 @@ export class FormValidationUI {
 7. **Cross-browser Test**: Test validation across all supported browsers
 8. **Mobile Test**: Test validation on mobile devices and touch interfaces
 
-## Notes
-- Implements comprehensive form validation with real-time feedback
-- Supports both restaurant and rating form validation
-- Includes graceful handling of storage quota issues
-- Provides excellent user experience with clear error messages
-- Includes proper accessibility support for validation states
-- Handles edge cases like network errors and corrupted data
-- Responsive design ensures good experience on all devices
+**Success Metrics:**
+- All forms have real-time validation with visual feedback
+- Users receive clear, specific error messages for validation failures
+- Form submission is blocked until all mandatory fields are valid
+- Storage quota errors are handled gracefully with helpful messages
+- Form validation works across all supported browsers and devices
+- Accessibility requirements are met for validation states
+
+### Dependencies
+- Story 2.1: Restaurant Registration Form (for restaurant form validation)
+- Story 3.2: Rating Form & Interface (for rating form validation)
+- Story 1.4: Modal Framework (for modal form validation)
+- CSS validation styles from previous stories
+
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // TEMPORARY CLEANUP RULES - Allow full access for data cleanup
+    // WARNING: These rules are permissive and should only be used temporarily for cleanup
+
+    // Full access to all paths for cleanup
+    match /{allPaths=**} {
+      allow read, write, delete: if true; // Temporary full access for cleanup
+    }
+  }
+}

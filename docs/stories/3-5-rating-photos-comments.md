@@ -1,13 +1,47 @@
 # Story 3.5: Rating Photos & Comments
 
-## User Story
-Como usuário, eu quero poder adicionar fotos e comentários opcionais às minhas avaliações para compartilhar minha experiência de forma mais completa e ajudar outros usuários com informações visuais e detalhadas.
+## Status
+Draft
+
+## Story
+**As a** user,
+**I want** to be able to add photos and optional comments to my ratings,
+**so that** I can share my experience more completely and help other users with visual and detailed information.
 
 ## Acceptance Criteria
-- [ ] Formulário de avaliação deve incluir campo opcional para comentários
-- [ ] Usuários devem poder fazer upload de até 2 fotos por avaliação
-- [ ] Fotos devem ser otimizadas automaticamente antes do upload
-- [ ] Preview de fotos deve ser mostrado antes do envio
+1. Rating form must include optional field for comments
+2. Users must be able to upload up to 2 photos per rating
+3. Photos must be automatically optimized before upload
+4. Photo preview must be shown before submission
+5. Comments must support text validation and sanitization
+6. Photo uploads must have size and format validation
+7. Interface must handle upload progress and errors
+8. Display must show photos and comments in restaurant details
+
+## Tasks / Subtasks
+- [ ] Task 1: Implement comment system (AC: 1, 5)
+  - [ ] Create optional comment input field in rating form
+  - [ ] Add text validation and sanitization
+  - [ ] Implement character limits and guidelines
+  - [ ] Add comment preview functionality
+- [ ] Task 2: Create photo upload system (AC: 2, 3, 4)
+  - [ ] Implement photo upload interface for up to 2 photos
+  - [ ] Add automatic photo optimization and compression
+  - [ ] Create photo preview before submission
+  - [ ] Add drag-and-drop photo upload functionality
+- [ ] Task 3: Implement validation and error handling (AC: 6, 7)
+  - [ ] Add file size and format validation
+  - [ ] Create upload progress indicators
+  - [ ] Implement error handling for failed uploads
+  - [ ] Add retry mechanisms for failed uploads
+- [ ] Task 4: Build display system (AC: 8)
+  - [ ] Create photo gallery for rating photos
+  - [ ] Implement comment display in restaurant details
+  - [ ] Add photo zoom and navigation features
+  - [ ] Create responsive layout for photos and comments
+
+## Dev Notes
+This story implements photo and comment functionality for restaurant ratings, allowing users to share richer, more detailed experiences through visual and text content.
 - [ ] Comentários devem ter limite de 500 caracteres
 - [ ] Interface deve permanecer simples mesmo com funcionalidades adicionais
 - [ ] Fotos e comentários devem ser exibidos no modal do restaurante

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Rating Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+        }
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fef2f2; color: #991b1b; }
+        .info { background: #dbeafe; color: #1e40af; }
+        .mock-restaurant {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Rating Form Test Suite</h1>
+        <p>Use this page to test the rating form functionality.</p>
+
+        <div class="test-section">
+            <h2>Test Rating Modal</h2>
+            <div class="mock-restaurant">
+                <h3>🍕 Pizzaria Esplanada</h3>
+                <p>Autêntica pizza italiana no coração da Esplanada</p>
+                <p>⭐ Avaliação atual: 4.2 (156 avaliações)</p>
+            </div>
+            <button class="test-button" onclick="testRatingModal()">Test Rating Modal</button>
+            <button class="test-button" onclick="testRatingWithoutIdentification()">Test Without User ID</button>
+            <button class="test-button" onclick="clearUserData()">Clear User Data</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Components</h2>
+            <button class="test-button" onclick="testFingerprintService()">Test Fingerprint Service</button>
+            <button class="test-button" onclick="testIdentificationService()">Test Identification Service</button>
+            <button class="test-button" onclick="simulateRatingSubmission()">Simulate Rating API</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- Modal Container (copied from main app) -->
+    <div id="modal-container" class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="display: none;">
+        <div class="modal-overlay" aria-hidden="true"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Fechar modal">&times;</button>
+            <div id="modal-body">
+                <!-- Modal content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { FingerprintService } from './js/services/fingerprint-service.js';
+        import { UserIdentificationService } from './js/services/user-identification-service.js';
+        import { ModalService } from './js/modules/modal-service.js';
+
+        // Initialize services
+        window.fingerprintService = new FingerprintService();
+        window.identificationService = new UserIdentificationService();
+        window.modalService = new ModalService();
+
+        // Mock restaurant data
+        window.mockRestaurant = {
+            id: 'test-restaurant-1',
+            name: 'Pizzaria Esplanada',
+            description: 'Autêntica pizza italiana no coração da Esplanada',
+            averageQuality: 4.2,
+            totalReviews: 156,
+            photoUrls: ['https://images.unsplash.com/photo-1565299624946-b28f40a0ca38b?w=400']
+        };
+
+        // Test result logging
+        window.addResult = function(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            resultsDiv.appendChild(result);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        // Test rating modal
+        window.testRatingModal = async function() {
+            try {
+                addResult('Testing rating modal...', 'info');
+
+                // Import and create rating form
+                const { RatingForm } = await import('./js/components/rating-form.js');
+                const ratingForm = new RatingForm(
+                    window.mockRestaurant,
+                    window.modalService,
+                    window.identificationService
+                );
+
+                // Show rating form
+                const result = await ratingForm.show();
+
+                if (result && result.success) {
+                    addResult(`✅ Rating submitted successfully: ${result.rating} stars`, 'success');
+                    addResult(`User: ${result.user.userName}`, 'info');
+                    addResult(`Restaurant: ${result.restaurant.name}`, 'info');
+                } else {
+                    addResult('❌ Rating was cancelled or failed', 'error');
+                }
+
+            } catch (error) {
+                addResult(`❌ Rating modal error: ${error.message}`, 'error');
+                console.error('Rating test error:', error);
+            }
+        };
+
+        // Test rating without user identification
+        window.testRatingWithoutIdentification = async function() {
+            try {
+                addResult('Testing rating without user identification...', 'info');
+
+                // Clear any existing user data
+                window.identificationService.clearIdentification();
+
+                // Test rating modal (should prompt for identification)
+                const { RatingForm } = await import('./js/components/rating-form.js');
+                const ratingForm = new RatingForm(
+                    window.mockRestaurant,
+                    window.modalService,
+                    window.identificationService
+                );
+
+                const result = await ratingForm.show();
+
+                if (result && result.success) {
+                    addResult(`✅ Rating completed after identification: ${result.rating} stars`, 'success');
+                } else {
+                    addResult('❌ Rating process cancelled during identification', 'error');
+                }
+
+            } catch (error) {
+                addResult(`❌ Rating without ID error: ${error.message}`, 'error');
+                console.error('Rating without ID error:', error);
+            }
+        };
+
+        // Clear user data
+        window.clearUserData = function() {
+            window.identificationService.clearIdentification();
+            addResult('User data cleared', 'info');
+        };
+
+        // Test fingerprint service
+        window.testFingerprintService = async function() {
+            try {
+                addResult('Testing fingerprint service...', 'info');
+                const result = await window.fingerprintService.generateFingerprint();
+                addResult(`✅ Fingerprint generated: ${result.hash.substring(0, 16)}...`, 'success');
+                addResult(`Data points collected: ${Object.keys(result.data).length}`, 'info');
+            } catch (error) {
+                addResult(`❌ Fingerprint error: ${error.message}`, 'error');
+            }
+        };
+
+        // Test identification service
+        window.testIdentificationService = async function() {
+            try {
+                addResult('Testing identification service...', 'info');
+
+                if (window.identificationService.isUserIdentified()) {
+                    const userData = window.identificationService.getUserData();
+                    addResult(`✅ User already identified: ${userData.userName}`, 'success');
+                } else {
+                    addResult('User not identified, initializing...', 'info');
+                    const initResult = await window.identificationService.initializeUserIdentification();
+
+                    if (initResult.needsIdentification) {
+                        addResult('User identification needed', 'info');
+                    } else {
+                        addResult(`✅ User identified: ${initResult.userName}`, 'success');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Identification service error: ${error.message}`, 'error');
+            }
+        };
+
+        // Simulate rating API
+        window.simulateRatingSubmission = function() {
+            addResult('Simulating rating API call...', 'info');
+
+            setTimeout(() => {
+                if (Math.random() > 0.2) {
+                    addResult('✅ API call successful - rating saved', 'success');
+                } else {
+                    addResult('❌ API call failed - network error', 'error');
+                }
+            }, 1500);
+        };
+
+        // Initialize
+        addResult('Test page loaded successfully', 'success');
+        addResult('Services initialized and ready for testing', 'info');
+
+    </script>
+</body>
+</html>

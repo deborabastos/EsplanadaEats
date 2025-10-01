@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Firebase SDK Integration</title>
+    <meta name="description" content="Test page for Firebase SDK integration">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../src/styles.css">
+
+    <!-- Firebase Configuration -->
+    <script src="../src/firebase-config.js"></script>
+
+    <!-- Firebase Services Module -->
+    <script type="module" src="../src/firebase.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center py-4">
+            <h1>🔥 Test: Firebase SDK Integration</h1>
+            <p class="lead">Story 0.2: Testing Firebase SDK integration and services</p>
+        </header>
+
+        <main>
+            <!-- Connection Status -->
+            <div id="connection-status" class="alert alert-info text-center">
+                <span id="status-text">Initializing Firebase...</span>
+            </div>
+
+            <!-- SDK Loading Test -->
+            <section class="my-4">
+                <h2>SDK Loading Status</h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Firebase App</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="firebase-app-status">⏳ Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Firestore</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="firestore-status">⏳ Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Storage</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="storage-status">⏳ Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Offline Persistence</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="persistence-status">⏳ Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Database Operations Test -->
+            <section class="my-4">
+                <h2>Database Operations</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Restaurant Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary mb-2" onclick="testRestaurantCRUD()">
+                                    Test Restaurant CRUD
+                                </button>
+                                <button class="btn btn-info mb-2" onclick="testRealtimeListener()">
+                                    Test Real-time Listener
+                                </button>
+                                <button class="btn btn-warning mb-2" onclick="testBatchOperations()">
+                                    Test Batch Operations
+                                </button>
+                                <div id="restaurant-result" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Review Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary mb-2" onclick="testReviewCRUD()">
+                                    Test Review CRUD
+                                </button>
+                                <button class="btn btn-info mb-2" onclick="testReviewQueries()">
+                                    Test Review Queries
+                                </button>
+                                <button class="btn btn-warning mb-2" onclick="testReviewListener()">
+                                    Test Review Listener
+                                </button>
+                                <div id="review-result" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Storage Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <input type="file" id="test-file" accept="image/*" class="form-control mb-2">
+                                <button class="btn btn-primary mb-2" onclick="testFileUpload()">
+                                    Test File Upload
+                                </button>
+                                <button class="btn btn-info mb-2" onclick="testFileOperations()">
+                                    Test File Operations
+                                </button>
+                                <button class="btn btn-warning mb-2" onclick="testStorageHelpers()">
+                                    Test Storage Helpers
+                                </button>
+                                <div id="storage-result" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Handling Test -->
+            <section class="my-4">
+                <h2>Error Handling Test</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Simulate Errors</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-danger mb-2" onclick="testPermissionError()">
+                                    Test Permission Error
+                                </button>
+                                <button class="btn btn-danger mb-2" onclick="testNetworkError()">
+                                    Test Network Error
+                                </button>
+                                <button class="btn btn-danger mb-2" onclick="testInvalidArgumentError()">
+                                    Test Invalid Argument
+                                </button>
+                                <button class="btn btn-danger mb-2" onclick="testNotFoundError()">
+                                    Test Not Found Error
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Error Log</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="error-log" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+                                <button class="btn btn-secondary btn-sm mt-2" onclick="clearErrorLog()">
+                                    Clear Log
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Test -->
+            <section class="my-4">
+                <h2>Performance Test</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Bulk Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary mb-2" onclick="testBulkInsert()">
+                                    Test Bulk Insert (10 items)
+                                </button>
+                                <button class="btn btn-primary mb-2" onclick="testBulkQueries()">
+                                    Test Bulk Queries
+                                </button>
+                                <div id="bulk-result" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Real-time Performance</h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary mb-2" onclick="testRealtimePerformance()">
+                                    Test Real-time Updates
+                                </button>
+                                <div id="realtime-result" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Connection Monitor</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="connection-monitor">
+                                    <div>Status: <span id="connection-state">Unknown</span></div>
+                                    <div>Last Check: <span id="last-check">Never</span></div>
+                                </div>
+                                <button class="btn btn-info btn-sm mt-2" onclick="checkConnection()">
+                                    Check Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Test Scripts -->
+    <script type="module">
+        // Import Firebase services
+        import {
+            restaurantsRef,
+            reviewsRef,
+            storageRef,
+            photosRef,
+            setupRestaurantListener,
+            setupReviewsListener,
+            getRestaurantsQuery,
+            getRestaurantReviewsQuery,
+            getUserReviewsQuery,
+            getRestaurantRef,
+            getReviewRef,
+            generatePhotoPath,
+            generateReviewPhotoPath,
+            getDownloadURL,
+            uploadFile,
+            deleteFile,
+            handleError,
+            batchUpdateRestaurants,
+            db,
+            storage
+        } from '../src/firebase.js';
+
+        // Global test variables
+        let testRestaurantId = null;
+        let testReviewId = null;
+        let testFilePath = null;
+
+        // Test result display function
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const colors = {
+                success: '#28a745',
+                error: '#dc3545',
+                warning: '#ffc107',
+                info: '#17a2b8'
+            };
+
+            element.innerHTML = `<div style="color: ${colors[type]}; font-weight: bold;">${message}</div>`;
+            console.log(`Test Result (${elementId}):`, message);
+        }
+
+        // SDK Loading Tests
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                // Test Firebase App
+                if (firebase.apps.length > 0) {
+                    showResult('firebase-app-status', '✅ Firebase App Initialized', 'success');
+                } else {
+                    showResult('firebase-app-status', '❌ Firebase App Failed', 'error');
+                }
+
+                // Test Firestore
+                if (db) {
+                    showResult('firestore-status', '✅ Firestore Initialized', 'success');
+                } else {
+                    showResult('firestore-status', '❌ Firestore Failed', 'error');
+                }
+
+                // Test Storage
+                if (storage) {
+                    showResult('storage-status', '✅ Storage Initialized', 'success');
+                } else {
+                    showResult('storage-status', '❌ Storage Failed', 'error');
+                }
+
+                // Test Offline Persistence
+                db.enablePersistence()
+                    .then(() => {
+                        showResult('persistence-status', '✅ Offline Persistence Enabled', 'success');
+                    })
+                    .catch((err) => {
+                        showResult('persistence-status', '⚠️ Persistence: ' + err.code, 'warning');
+                    });
+            }, 1000);
+        });
+
+        // Restaurant CRUD Tests
+        window.testRestaurantCRUD = async () => {
+            try {
+                showResult('restaurant-result', 'Testing Restaurant CRUD...', 'info');
+
+                // Create
+                const restaurantData = {
+                    name: 'Test Restaurant ' + Date.now(),
+                    hours: '12h00-23h00',
+                    price: 'R$ 30-50',
+                    vegetarianOptions: 'Algumas',
+                    access: 'Simples',
+                    description: 'Test restaurant for CRUD operations',
+                    averageQuality: 4.5,
+                    totalRatings: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                const docRef = await restaurantsRef.add(restaurantData);
+                testRestaurantId = docRef.id;
+                showResult('restaurant-result', '✅ Restaurant Created: ' + testRestaurantId, 'success');
+
+                // Read
+                const doc = await docRef.get();
+                if (doc.exists) {
+                    showResult('restaurant-result', '✅ Restaurant Read Successfully', 'success');
+                } else {
+                    showResult('restaurant-result', '❌ Restaurant Not Found', 'error');
+                }
+
+                // Update
+                await docRef.update({
+                    averageQuality: 4.8,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showResult('restaurant-result', '✅ Restaurant Updated', 'success');
+
+            } catch (error) {
+                showResult('restaurant-result', '❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Real-time Listener Test
+        window.testRealtimeListener = () => {
+            showResult('restaurant-result', 'Setting up real-time listener...', 'info');
+
+            const unsubscribe = setupRestaurantListener((restaurants) => {
+                showResult('restaurant-result', `✅ Real-time update: ${restaurants.length} restaurants`, 'success');
+                // Auto-unsubscribe after 10 seconds
+                setTimeout(() => unsubscribe(), 10000);
+            });
+        };
+
+        // Batch Operations Test
+        window.testBatchOperations = async () => {
+            try {
+                showResult('restaurant-result', 'Testing batch operations...', 'info');
+
+                if (!testRestaurantId) {
+                    showResult('restaurant-result', '❌ Create a restaurant first', 'error');
+                    return;
+                }
+
+                const updates = [
+                    { restaurantId: testRestaurantId, data: { averageQuality: 5.0 } }
+                ];
+
+                const success = await batchUpdateRestaurants(updates);
+                if (success) {
+                    showResult('restaurant-result', '✅ Batch operations completed', 'success');
+                } else {
+                    showResult('restaurant-result', '❌ Batch operations failed', 'error');
+                }
+
+            } catch (error) {
+                showResult('restaurant-result', '❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Review CRUD Tests
+        window.testReviewCRUD = async () => {
+            try {
+                showResult('review-result', 'Testing Review CRUD...', 'info');
+
+                if (!testRestaurantId) {
+                    showResult('review-result', '❌ Create a restaurant first', 'error');
+                    return;
+                }
+
+                const reviewData = {
+                    restaurantId: testRestaurantId,
+                    userName: 'Test User',
+                    userFingerprint: 'test-fingerprint-' + Date.now(),
+                    quality: 4.5,
+                    price: 4.0,
+                    access: 'Simples',
+                    vegetarianOptions: 'Algumas',
+                    comment: 'Test review for CRUD operations',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                const docRef = await reviewsRef.add(reviewData);
+                testReviewId = docRef.id;
+                showResult('review-result', '✅ Review Created: ' + testReviewId, 'success');
+
+                // Read
+                const doc = await docRef.get();
+                if (doc.exists) {
+                    showResult('review-result', '✅ Review Read Successfully', 'success');
+                } else {
+                    showResult('review-result', '❌ Review Not Found', 'error');
+                }
+
+            } catch (error) {
+                showResult('review-result', '❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // File Upload Test
+        window.testFileUpload = async () => {
+            try {
+                const fileInput = document.getElementById('test-file');
+                if (!fileInput.files[0]) {
+                    showResult('storage-result', '⚠️ Please select a file first', 'warning');
+                    return;
+                }
+
+                showResult('storage-result', 'Testing file upload...', 'info');
+
+                const file = fileInput.files[0];
+                const path = generatePhotoPath('test-restaurant', file.name);
+
+                const downloadURL = await uploadFile(file, path, { test: 'true' });
+                testFilePath = path;
+
+                showResult('storage-result', '✅ File uploaded successfully!', 'success');
+                showResult('storage-result', `URL: ${downloadURL.substring(0, 50)}...`, 'info');
+
+            } catch (error) {
+                showResult('storage-result', '❌ Error: ' + error.message, 'error');
+            }
+        };
+
+        // Error Simulation Tests
+        window.testPermissionError = () => {
+            const fakeError = {
+                code: 'permission-denied',
+                message: 'Missing or insufficient permissions',
+                operation: () => console.log('Retry operation')
+            };
+            handleError(fakeError);
+        };
+
+        window.testNetworkError = () => {
+            const fakeError = {
+                code: 'network-request-failed',
+                message: 'Network request failed',
+                operation: () => console.log('Retry network operation')
+            };
+            handleError(fakeError);
+        };
+
+        window.testInvalidArgumentError = () => {
+            const fakeError = {
+                code: 'invalid-argument',
+                message: 'Invalid argument provided'
+            };
+            handleError(fakeError);
+        };
+
+        window.testNotFoundError = () => {
+            const fakeError = {
+                code: 'not-found',
+                message: 'Document not found'
+            };
+            handleError(fakeError);
+        };
+
+        // Clear error log
+        window.clearErrorLog = () => {
+            document.getElementById('error-log').innerHTML = '';
+        };
+
+        // Monitor errors and log them
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            const errorLog = document.getElementById('error-log');
+            if (errorLog) {
+                const timestamp = new Date().toLocaleTimeString();
+                errorLog.innerHTML += `<div>[${timestamp}] ${args.join(' ')}</div>`;
+                errorLog.scrollTop = errorLog.scrollHeight;
+            }
+        };
+
+        // Connection monitoring
+        window.checkConnection = () => {
+            const state = navigator.onLine ? 'Online' : 'Offline';
+            document.getElementById('connection-state').textContent = state;
+            document.getElementById('connection-state').style.color = navigator.onLine ? '#28a745' : '#dc3545';
+            document.getElementById('last-check').textContent = new Date().toLocaleTimeString();
+        };
+
+        // Auto-check connection every 30 seconds
+        setInterval(window.checkConnection, 30000);
+        window.checkConnection();
+
+        console.log('🚀 Firebase SDK Integration Test Page Loaded');
+    </script>
+</body>
+</html>

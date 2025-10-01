@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Campos dos Restaurantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .restaurant-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .field {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .field-name {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .field-value {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug - Campos dos Restaurantes</h1>
+
+        <div>
+            <button class="btn" onclick="debugRestaurantFields()">Verificar Campos dos Restaurantes</button>
+            <button class="btn" onclick="testCardDisplay()">Testar Exibição dos Cards</button>
+            <button class="btn" onclick="clearLog()">Limpar Console</button>
+        </div>
+
+        <div id="restaurants-debug"></div>
+        <div id="log" class="log">Console aguardando comandos...</div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js?v=2.1.0"></script>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const restaurantsDiv = document.getElementById('restaurants-debug');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.debugRestaurantFields = async function() {
+            try {
+                log('🔍 Verificando campos dos restaurantes...', 'info');
+                restaurantsDiv.innerHTML = '';
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const { firebase } = window.EsplanadaEatsFirebase;
+                const db = firebase.firestore();
+
+                const snapshot = await db.collection('restaurants').get();
+                log(`📊 Encontrados ${snapshot.size} restaurantes`);
+
+                snapshot.forEach(doc => {
+                    const restaurant = doc.data();
+                    const restaurantId = doc.id;
+
+                    const div = document.createElement('div');
+                    div.className = 'restaurant-item';
+
+                    // Create fields display
+                    let fieldsHtml = `
+                        <h4>${restaurant.name} (ID: ${restaurantId})</h4>
+                        <div class="field"><span class="field-name">averageQuality:</span> <span class="field-value">${restaurant.averageQuality || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">averageOverall:</span> <span class="field-value">${restaurant.averageOverall || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">totalRatings:</span> <span class="field-value">${restaurant.totalRatings || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">totalReviews:</span> <span class="field-value">${restaurant.totalReviews || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">ratingCount:</span> <span class="field-value">${restaurant.ratingCount || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">numRatings:</span> <span class="field-value">${restaurant.numRatings || 'NÃO DEFINIDO'}</span></div>
+                        <div class="field"><span class="field-name">reviewsCount:</span> <span class="field-value">${restaurant.reviewsCount || 'NÃO DEFINIDO'}</span></div>
+                    `;
+
+                    // Show all available fields
+                    Object.keys(restaurant).forEach(key => {
+                        if (!['name', 'id'].includes(key)) {
+                            const value = restaurant[key];
+                            const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+                            fieldsHtml += `<div class="field"><span class="field-name">${key}:</span> <span class="field-value">${displayValue}</span></div>`;
+                        }
+                    });
+
+                    div.innerHTML = fieldsHtml;
+                    restaurantsDiv.appendChild(div);
+
+                    log(`📊 ${restaurant.name}: avgQuality=${restaurant.averageQuality || 0}, totalRatings=${restaurant.totalRatings || 0}`);
+                });
+
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        };
+
+        window.testCardDisplay = function() {
+            log('🧪 Testando exibição dos cards...', 'info');
+
+            // Test the exact logic used in the card
+            const restaurants = Array.from(document.querySelectorAll('.restaurant-item')).map(item => {
+                const name = item.querySelector('h4').textContent.split(' (ID: ')[0];
+                const fields = {};
+                item.querySelectorAll('.field').forEach(field => {
+                    const fieldName = field.querySelector('.field-name').textContent.replace(':', '');
+                    const fieldValue = field.querySelector('.field-value').textContent;
+                    fields[fieldName] = fieldValue;
+                });
+                return { name, fields };
+            });
+
+            restaurants.forEach(restaurant => {
+                const fields = restaurant.fields;
+
+                // Replicate the exact card logic
+                const rating = fields.averageQuality || fields.averageOverall || 0;
+                const reviewCount = fields.totalRatings || fields.totalReviews || 0;
+                const reviewText = reviewCount === 1 ? '1 avaliação' : `${reviewCount} avaliações`;
+
+                log(`🎭 Card Display Test: ${restaurant.name}`);
+                log(`   averageQuality: ${rating}`);
+                log(`   totalRatings: ${fields.totalRatings || 'undefined'}`);
+                log(`   totalReviews: ${fields.totalReviews || 'undefined'}`);
+                log(`   reviewCount: ${reviewCount}`);
+                log(`   reviewText: "${reviewText}"`);
+                log('');
+            });
+        };
+
+        window.clearLog = function() {
+            logDiv.innerHTML = 'Console limpo...';
+        };
+
+        // Initialize
+        log('🚀 Ferramenta de debug de campos carregada');
+        log('📋 Clique para verificar os campos exatos dos restaurantes');
+    </script>
+</body>
+</html>

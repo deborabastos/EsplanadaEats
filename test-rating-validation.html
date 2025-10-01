@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Validação de Avaliação</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f8fafc;
+        }
+        .test-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fef2f2; color: #991b1b; }
+        .info { background: #dbeafe; color: #1e40af; }
+        .warning { background: #fef3c7; color: #92400e; }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 500;
+        }
+        button:hover { background: #1d4ed8; }
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .validation-details {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Teste do Sistema de Validação de Avaliação</h1>
+        <p>Esta página testa todas as funcionalidades de validação implementadas no Story 3.3.</p>
+
+        <div class="test-section">
+            <h2>📊 Estatísticas de Validação</h2>
+            <div id="validation-stats" class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-validations">0</div>
+                    <div class="stat-label">Total de Validações</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="successful-validations">0</div>
+                    <div class="stat-label">Validações Bem-sucedidas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="failed-validations">0</div>
+                    <div class="stat-label">Validações Falharam</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="security-events">0</div>
+                    <div class="stat-label">Eventos de Segurança</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Testes de Validação</h2>
+            <button onclick="testValidRating()">✅ Testar Avaliação Válida</button>
+            <button onclick="testInvalidRating()">❌ Testar Avaliação Inválida</button>
+            <button onclick="testDuplicateRating()">🔄 Testar Avaliação Duplicada</button>
+            <button onclick="testRateLimit()">⏱️ Testar Rate Limit</button>
+            <button onclick="testSuspiciousActivity()">🤖 Testar Detecção de Bot</button>
+            <button onclick="testBusinessRules()">📋 Testar Regras de Negócio</button>
+        </div>
+
+        <div class="test-section">
+            <h2>⚙️ Ações de Sistema</h2>
+            <button onclick="clearRateLimits()">🧹 Limpar Rate Limits</button>
+            <button onclick="showSecurityLogs()">🔒 Ver Logs de Segurança</button>
+            <button onclick="showValidationStats()">📈 Ver Estatísticas Detalhadas</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js"></script>
+
+    <script type="module">
+        import { FingerprintService } from './js/services/fingerprint-service.js?v=1.0.1';
+        import { UserIdentificationService } from './js/services/user-identification-service.js?v=1.0.1';
+        import { RatingValidationService } from './js/services/rating-validation-service.js?v=1.0.1';
+        import { StorageService } from './js/services/storage-service.js?v=1.0.1';
+
+        // Initialize services
+        window.fingerprintService = new FingerprintService();
+        window.identificationService = new UserIdentificationService();
+        window.storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+        // Wait a bit for services to initialize
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        window.validationService = new RatingValidationService(window.storageService);
+
+        let testUser = null;
+        let testRestaurantId = null;
+
+        // Utility functions
+        window.addResult = function(message, type = 'info', details = null) {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+
+            let content = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+
+            if (details) {
+                content += `<div class="validation-details">${JSON.stringify(details, null, 2)}</div>`;
+            }
+
+            result.innerHTML = content;
+            resultsDiv.appendChild(result);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        window.updateStats = async function() {
+            try {
+                const stats = window.validationService.getValidationStats();
+                const logs = window.validationService.getSecurityLogs(100);
+
+                document.getElementById('total-validations').textContent = stats.totalValidations;
+                document.getElementById('successful-validations').textContent = stats.successfulValidations;
+                document.getElementById('failed-validations').textContent = stats.failedValidations;
+                document.getElementById('security-events').textContent = logs.length - stats.totalValidations;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        };
+
+        // Initialize test user
+        window.initializeTestUser = async function() {
+            try {
+                if (!window.identificationService.isUserIdentified()) {
+                    const initResult = await window.identificationService.initializeUserIdentification();
+                    if (initResult.needsIdentification) {
+                        testUser = await window.identificationService.completeIdentification('Usuário Teste Validação');
+                    } else {
+                        testUser = initResult;
+                    }
+                } else {
+                    testUser = window.identificationService.getUserData();
+                }
+
+                // Create test restaurant if needed
+                const restaurantData = {
+                    name: 'Restaurante Teste Validação',
+                    address: 'Endereço Teste',
+                    phone: '123456789',
+                    category: 'Teste',
+                    description: 'Restaurante para testes de validação',
+                    price: 2,
+                    averageQuality: 0,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const restaurantRef = await window.EsplanadaEatsFirebase.db.collection('restaurants').add(restaurantData);
+                testRestaurantId = restaurantRef.id;
+
+                addResult(`✅ Usuário teste criado: ${testUser.userName}`, 'success');
+                addResult(`🍽️ Restaurante teste criado: ${testRestaurantId}`, 'success');
+
+                return true;
+            } catch (error) {
+                addResult(`❌ Erro ao inicializar teste: ${error.message}`, 'error');
+                return false;
+            }
+        };
+
+        // Test functions
+        window.testValidRating = async function() {
+            try {
+                addResult('✅ Testando avaliação válida...', 'info');
+
+                if (!await initializeTestUser()) return;
+
+                const validRatingData = {
+                    restaurantId: testRestaurantId,
+                    restaurantName: 'Restaurante Teste Validação',
+                    rating: 5,
+                    userId: testUser.userId,
+                    userName: testUser.userName,
+                    userFingerprint: testUser.fingerprint,
+                    timestamp: new Date().toISOString(),
+                    quality: 5,
+                    taste: 5,
+                    priceRating: 4,
+                    ambiance: 5,
+                    service: 5,
+                    comment: 'Excel restaurante! Recomendo muito.',
+                    moderationStatus: 'approved',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const validation = await window.validationService.validateRating(validRatingData);
+
+                if (validation.isValid) {
+                    addResult('✅ Avaliação válida aprovada com sucesso!', 'success', validation.metadata);
+                } else {
+                    addResult(`❌ Avaliação válida foi rejeitada: ${validation.errors.join(', ')}`, 'error', validation.errors);
+                }
+
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de avaliação válida: ${error.message}`, 'error');
+            }
+        };
+
+        window.testInvalidRating = async function() {
+            try {
+                addResult('❌ Testando avaliação inválida...', 'info');
+
+                const invalidRatingData = {
+                    restaurantId: '', // Empty - should fail validation
+                    restaurantName: 'Restaurante Teste',
+                    rating: 10, // Invalid rating (should be 1-5)
+                    userId: 'invalid-user',
+                    userName: '', // Empty - should fail validation
+                    userFingerprint: 'short', // Too short - should fail validation
+                    timestamp: new Date().toISOString(),
+                    quality: 6, // Invalid quality (should be 0-5)
+                    moderationStatus: 'invalid_status' // Invalid status
+                };
+
+                const validation = await window.validationService.validateRating(invalidRatingData);
+
+                if (!validation.isValid) {
+                    addResult(`✅ Avaliação inválida corretamente rejeitada com ${validation.errors.length} erros`, 'success', validation.errors);
+                } else {
+                    addResult('❌ Avaliação inválida foi aprovada incorretamente!', 'error');
+                }
+
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de avaliação inválida: ${error.message}`, 'error');
+            }
+        };
+
+        window.testDuplicateRating = async function() {
+            try {
+                addResult('🔄 Testando detecção de avaliação duplicada...', 'info');
+
+                if (!await initializeTestUser()) return;
+
+                // First, submit a valid rating
+                const validRatingData = {
+                    restaurantId: testRestaurantId,
+                    restaurantName: 'Restaurante Teste Validação',
+                    rating: 4,
+                    userId: testUser.userId,
+                    userName: testUser.userName,
+                    userFingerprint: testUser.fingerprint,
+                    timestamp: new Date().toISOString(),
+                    quality: 4,
+                    moderationStatus: 'approved',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                // Submit first rating
+                const firstValidation = await window.validationService.validateRating(validRatingData);
+                if (firstValidation.isValid) {
+                    // Submit to Firebase
+                    await window.storageService.createRating(validRatingData);
+                    addResult('✅ Primeira avaliação criada com sucesso', 'success');
+
+                    // Try to submit duplicate immediately
+                    const duplicateValidation = await window.validationService.validateRating(validRatingData);
+
+                    if (!duplicateValidation.isValid) {
+                        addResult('✅ Avaliação duplicada corretamente detectada e bloqueada', 'success', duplicateValidation.errors);
+                    } else {
+                        addResult('❌ Avaliação duplicada não foi detectada', 'error');
+                    }
+                } else {
+                    addResult(`❌ Primeira avaliação falhou: ${firstValidation.errors.join(', ')}`, 'error');
+                }
+
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de avaliação duplicada: ${error.message}`, 'error');
+            }
+        };
+
+        window.testRateLimit = async function() {
+            try {
+                addResult('⏱️ Testando rate limiting...', 'info');
+
+                if (!await initializeTestUser()) return;
+
+                const ratingData = {
+                    restaurantId: testRestaurantId + '-rate-limit',
+                    restaurantName: 'Restaurante Teste Rate Limit',
+                    rating: 3,
+                    userId: testUser.userId,
+                    userName: testUser.userName,
+                    userFingerprint: testUser.fingerprint,
+                    timestamp: new Date().toISOString(),
+                    quality: 3,
+                    moderationStatus: 'approved',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                let passedCount = 0;
+                let blockedCount = 0;
+
+                // Try to submit multiple ratings rapidly
+                for (let i = 0; i < 5; i++) {
+                    const validation = await window.validationService.validateRating(ratingData);
+
+                    if (validation.isValid) {
+                        passedCount++;
+                        addResult(`✅ Submissão ${i + 1} aprovada`, 'success');
+                    } else {
+                        blockedCount++;
+                        addResult(`❌ Submissão ${i + 1} bloqueada: ${validation.errors[0]}`, 'warning');
+                    }
+
+                    // Small delay between submissions
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                addResult(`📊 Rate limit test: ${passedCount} aprovadas, ${blockedCount} bloqueadas`, 'info');
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de rate limiting: ${error.message}`, 'error');
+            }
+        };
+
+        window.testSuspiciousActivity = async function() {
+            try {
+                addResult('🤖 Testando detecção de atividade suspeita...', 'info');
+
+                // Test with suspicious user agent
+                const originalUserAgent = navigator.userAgent;
+
+                // Temporarily modify user agent for testing
+                Object.defineProperty(navigator, 'userAgent', {
+                    get: () => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                    configurable: true
+                });
+
+                const suspiciousRatingData = {
+                    restaurantId: testRestaurantId + '-suspicious',
+                    restaurantName: 'Restaurante Teste Suspeito',
+                    rating: 5,
+                    userId: testUser.userId,
+                    userName: testUser.userName,
+                    userFingerprint: testUser.fingerprint,
+                    timestamp: new Date().toISOString(),
+                    quality: 5,
+                    moderationStatus: 'approved',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const validation = await window.validationService.validateRating(suspiciousRatingData);
+
+                // Restore original user agent
+                Object.defineProperty(navigator, 'userAgent', {
+                    get: () => originalUserAgent,
+                    configurable: true
+                });
+
+                if (!validation.isValid) {
+                    addResult('✅ Atividade suspeita detectada e bloqueada', 'success', validation.errors);
+                } else {
+                    addResult('❌ Atividade suspeita não foi detectada', 'error');
+                }
+
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de detecção de atividade suspeita: ${error.message}`, 'error');
+            }
+        };
+
+        window.testBusinessRules = async function() {
+            try {
+                addResult('📋 Testando regras de negócio...', 'info');
+
+                // Test with future timestamp
+                const futureRatingData = {
+                    restaurantId: testRestaurantId + '-business',
+                    restaurantName: 'Restaurante Teste Business Rules',
+                    rating: 4,
+                    userId: testUser.userId,
+                    userName: testUser.userName,
+                    userFingerprint: testUser.fingerprint,
+                    timestamp: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Future time
+                    quality: 4,
+                    moderationStatus: 'approved',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const validation = await window.validationService.validateRating(futureRatingData);
+
+                if (!validation.isValid) {
+                    addResult('✅ Regra de negócio (data futura) corretamente aplicada', 'success', validation.errors);
+                } else {
+                    addResult('❌ Regra de negócio (data futura) não foi aplicada', 'error');
+                }
+
+                await updateStats();
+
+            } catch (error) {
+                addResult(`❌ Erro no teste de regras de negócio: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearRateLimits = function() {
+            window.validationService.clearRateLimits();
+            addResult('🧹 Rate limits limpos', 'info');
+            updateStats();
+        };
+
+        window.showSecurityLogs = function() {
+            const logs = window.validationService.getSecurityLogs(20);
+
+            if (logs.length === 0) {
+                addResult('📝 Nenhum log de segurança encontrado', 'info');
+                return;
+            }
+
+            const logsHtml = logs.map(log =>
+                `<div style="margin-bottom: 1rem; padding: 0.5rem; background: #f8fafc; border-radius: 4px;">
+                    <strong>${log.eventType || 'validation'}</strong> - ${new Date(log.timestamp).toLocaleString()}
+                    ${log.validationResult ? `(Validação: ${log.validationResult.isValid ? 'OK' : 'FALHOU'})` : ''}
+                </div>`
+            ).join('');
+
+            const resultsDiv = document.getElementById('results');
+            const logsContainer = document.createElement('div');
+            logsContainer.className = 'result info';
+            logsContainer.innerHTML = `
+                <strong>🔒 Últimos Logs de Segurança:</strong>
+                <div style="max-height: 300px; overflow-y: auto; margin-top: 1rem;">
+                    ${logsHtml}
+                </div>
+            `;
+            resultsDiv.appendChild(logsContainer);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        window.showValidationStats = function() {
+            const stats = window.validationService.getValidationStats();
+            const rateLimitStatus = window.validationService.getRateLimitStatus(testUser?.fingerprint || 'test');
+
+            const statsContent = `
+                <h4>📈 Estatísticas Detalhadas</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.totalValidations}</div>
+                        <div class="stat-label">Total de Validações</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.successfulValidations}</div>
+                        <div class="stat-label">Sucessos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.failedValidations}</div>
+                        <div class="stat-label">Falhas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.securityEvents}</div>
+                        <div class="stat-label">Eventos de Segurança</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <strong>Rate Limit Status:</strong>
+                    <pre>${JSON.stringify(rateLimitStatus, null, 2)}</pre>
+                </div>
+            `;
+
+            const resultsDiv = document.getElementById('results');
+            const statsContainer = document.createElement('div');
+            statsContainer.className = 'result info';
+            statsContainer.innerHTML = statsContent;
+            resultsDiv.appendChild(statsContainer);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        // Debug: Check if StorageService has required methods
+        console.log('🔍 StorageService instance:', window.storageService);
+        console.log('🔍 StorageService prototype:', Object.getPrototypeOf(window.storageService));
+        console.log('🔍 StorageService methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.storageService)));
+
+        const requiredMethods = ['getRatingsByUser', 'createRating', 'updateRating', 'logSecurityEvent'];
+        const missingMethods = requiredMethods.filter(method => typeof window.storageService[method] !== 'function');
+
+        if (missingMethods.length > 0) {
+            addResult(`❌ StorageService está faltando métodos: ${missingMethods.join(', ')}`, 'error');
+            addResult(`📋 Verificando método getRatingsByUser: ${typeof window.storageService.getRatingsByUser}`, 'error');
+            addResult(`📋 Verificando método logSecurityEvent: ${typeof window.storageService.logSecurityEvent}`, 'error');
+            addResult(`📋 Verificando método getUserRating: ${typeof window.storageService.getUserRating}`, 'error');
+        } else {
+            addResult('✅ StorageService tem todos os métodos necessários', 'success');
+        }
+
+        // Initialize
+        addResult('🔧 Sistema de validação carregado', 'success');
+        addResult('🧪 Pronto para testar validação de avaliações', 'info');
+
+        // Update stats periodically
+        setInterval(updateStats, 5000);
+        updateStats();
+
+    </script>
+</body>
+</html>

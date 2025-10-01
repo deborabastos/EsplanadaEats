@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fixed Rating System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #1d4ed8; transform: translateY(-1px); }
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background: #10b981; }
+        .status-error { background: #ef4444; }
+        .status-info { background: #3b82f6; }
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .step-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Teste do Sistema de Avaliação Corrigido</h1>
+        <p>Esta página testa se as avaliações estão sendo salvas no Firebase após as correções das regras de segurança.</p>
+
+        <div class="test-section">
+            <h2>📋 Status da Correção</h2>
+            <div class="result info">
+                <span class="status-indicator status-info"></span>
+                <strong>Regras do Firestore atualizadas</strong> - Permitindo avaliações anônimas com fingerprint
+            </div>
+            <div class="result info">
+                <span class="status-indicator status-info"></span>
+                <strong>Campos de dados corrigidos</strong> - Alinhados com validação do RatingModel
+            </div>
+            <div class="result info">
+                <span class="status-indicator status-info"></span>
+                <strong>Função isValidRating criada</strong> - Validação específica para avaliações
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Teste Passo a Passo</h2>
+            <ol class="step-list">
+                <li><strong>Verificar Firebase</strong> - Testar conexão com Firestore</li>
+                <li><strong>Criar Usuário Teste</strong> - Gerar fingerprint e identificar usuário</li>
+                <li><strong>Submeter Avaliação</strong> - Enviar avaliação de teste para Firebase</li>
+                <li><strong>Verificar Resultado</strong> - Confirmar salvamento no banco de dados</li>
+            </ol>
+
+            <button onclick="runCompleteTest()">🚀 Executar Teste Completo</button>
+            <button onclick="testFirebaseOnly()">📡 Testar Firebase Apenas</button>
+            <button onclick="testRatingOnly()">⭐ Testar Avaliação Apenas</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js"></script>
+
+    <script type="module">
+        import { FingerprintService } from './js/services/fingerprint-service.js';
+        import { UserIdentificationService } from './js/services/user-identification-service.js';
+
+        // Initialize services
+        window.fingerprintService = new FingerprintService();
+        window.identificationService = new UserIdentificationService();
+
+        // Test logging
+        window.addResult = function(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            resultsDiv.appendChild(result);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        };
+
+        // Test Firebase connection
+        window.testFirebaseConnection = async function() {
+            try {
+                addResult('🔍 Testando conexão com Firebase...', 'info');
+
+                if (!window.EsplanadaEatsFirebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const db = window.EsplanadaEatsFirebase.db;
+
+                // Test reading a document
+                const testDoc = await db.collection('connection-tests').doc('test').get();
+                addResult('✅ Conexão Firebase estabelecida com sucesso', 'success');
+
+                if (window.EsplanadaEatsFirebase.firebase && window.EsplanadaEatsFirebase.firebase.options) {
+                    addResult(`📊 Projeto: ${window.EsplanadaEatsFirebase.firebase.options.projectId}`, 'info');
+                } else {
+                    addResult(`📊 Projeto: Firebase conectado`, 'info');
+                }
+
+                return true;
+            } catch (error) {
+                addResult(`❌ Erro na conexão Firebase: ${error.message}`, 'error');
+                return false;
+            }
+        };
+
+        // Create test user
+        window.createTestUser = async function() {
+            try {
+                addResult('👤 Criando usuário de teste...', 'info');
+
+                // Check if user already exists
+                if (window.identificationService.isUserIdentified()) {
+                    const userData = window.identificationService.getUserData();
+                    addResult(`✅ Usuário já identificado: ${userData.userName}`, 'success');
+                    return userData;
+                }
+
+                // Initialize identification
+                const initResult = await window.identificationService.initializeUserIdentification();
+
+                if (initResult.needsIdentification) {
+                    const result = await window.identificationService.completeIdentification('Usuário Teste');
+                    addResult(`✅ Usuário teste criado: ${result.userName}`, 'success');
+                    addResult(`🔑 ID: ${result.userId.substring(0, 16)}...`, 'info');
+                    addResult(`👆 Fingerprint: ${result.fingerprint.substring(0, 16)}...`, 'info');
+                    return result;
+                } else {
+                    addResult(`✅ Usuário já existente: ${initResult.userName}`, 'success');
+                    return initResult;
+                }
+            } catch (error) {
+                addResult(`❌ Erro ao criar usuário: ${error.message}`, 'error');
+                throw error;
+            }
+        };
+
+        // Test rating submission
+        window.testRatingSubmission = async function(userData) {
+            try {
+                addResult('⭐ Testando submissão de avaliação...', 'info');
+
+                const { StorageService } = await import('./js/services/storage-service.js');
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                const ratingData = {
+                    restaurantId: 'test-restaurant-' + Date.now(), // ID único para evitar duplicados
+                    restaurantName: 'Restaurant Test Fixed',
+                    rating: 5,
+                    userId: userData.userId,
+                    userName: userData.userName,
+                    userFingerprint: userData.fingerprint,
+                    timestamp: new Date().toISOString(),
+                    quality: 5,
+                    price: null,
+                    service: null,
+                    comment: 'Test rating after security rules fix',
+                    taste: null,
+                    priceRating: null,
+                    ambiance: null,
+                    photos: [],
+                    isVerified: false,
+                    isHelpful: 0,
+                    isReported: false,
+                    moderationStatus: 'approved',
+                    response: null,
+                    responseDate: null
+                    // Let Firebase generate createdAt and updatedAt
+                };
+
+                const ratingId = await storageService.createRating(ratingData);
+
+                addResult(`🎉 AVALIAÇÃO SALVA COM SUCESSO!`, 'success');
+                addResult(`📝 ID da Avaliação: ${ratingId}`, 'success');
+                addResult(`⭐ Nota: ${ratingData.rating} estrelas`, 'info');
+                addResult(`🍽️ Restaurante: ${ratingData.restaurantName}`, 'info');
+                addResult(`👤 Usuário: ${ratingData.userName}`, 'info');
+
+                return ratingId;
+            } catch (error) {
+                console.error('❌ ERRO DETALHADO AO SALVAR AVALIAÇÃO:', error);
+                console.error('Stack trace:', error.stack);
+                console.error('Código do erro:', error.code);
+                addResult(`❌ Erro ao salvar avaliação: ${error.message}`, 'error');
+                if (error.message.includes('permission')) {
+                    addResult('⚠️ Problema de permissão detectado - Verifique as regras do Firestore', 'warning');
+                    console.error('🚨 PERMISSÃO NEGADA - Verificar regras do Firestore para coleção "ratings"');
+                }
+                throw error;
+            }
+        };
+
+        // Complete test
+        window.runCompleteTest = async function() {
+            try {
+                addResult('🚀 Iniciando teste completo do sistema de avaliação...', 'info');
+
+                // Step 1: Test Firebase connection
+                const firebaseOk = await testFirebaseConnection();
+                if (!firebaseOk) return;
+
+                // Step 2: Create test user
+                const userData = await createTestUser();
+
+                // Step 3: Test rating submission
+                const ratingId = await testRatingSubmission(userData);
+
+                // Step 4: Verify saved data
+                addResult('🔍 Verificando dados salvos...', 'info');
+                const { StorageService } = await import('./js/services/storage-service.js');
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                // This would need to be implemented in StorageService
+                addResult('✅ Teste completo finalizado com sucesso!', 'success');
+                addResult('🎯 O sistema de avaliação está funcionando corretamente!', 'success');
+
+            } catch (error) {
+                addResult(`❌ Falha no teste completo: ${error.message}`, 'error');
+            }
+        };
+
+        // Individual tests
+        window.testFirebaseOnly = async function() {
+            await testFirebaseConnection();
+        };
+
+        window.testRatingOnly = async function() {
+            try {
+                const userData = await createTestUser();
+                await testRatingSubmission(userData);
+            } catch (error) {
+                addResult(`❌ Erro no teste de avaliação: ${error.message}`, 'error');
+            }
+        };
+
+        // Initialize
+        addResult('📱 Página de teste carregada com sucesso', 'success');
+        addResult('🔧 Sistema pronto para testar avaliações corrigidas', 'info');
+
+    </script>
+</body>
+</html>

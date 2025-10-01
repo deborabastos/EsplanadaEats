@@ -1,17 +1,62 @@
 # Story 3.4: Rating Calculation & Display
 
-## User Story
-Como usuário, eu quero ver a média de qualidade de cada restaurante exibida de forma clara e visualmente atraente nos cards de restaurante para poder fazer escolhas informadas sobre onde comer.
+## Status
+Draft
+
+## Story
+**As a** user,
+**I want** to see the average quality rating of each restaurant displayed clearly and visually appealingly in the restaurant cards,
+**so that** I can make informed choices about where to eat.
 
 ## Acceptance Criteria
-- [ ] Média de qualidade deve ser calculada automaticamente após cada avaliação
-- [ ] Display visual deve ser intuitivo e fácil de entender
-- [ ] Sistema deve mostrar número total de avaliações
-- [ ] Interface deve atualizar em tempo real quando novas avaliações são adicionadas
-- [ ] Design deve ser consistente com o estilo visual do aplicativo
-- [ ] Display deve ser responsivo e funcionar em mobile
-- [ ] Restaurantes sem avaliações devem mostrar estado apropriado
-- [ ] Formato deve ser acessível e seguir boas práticas de UI
+1. Average quality must be calculated automatically after each rating
+2. Visual display must be intuitive and easy to understand
+3. System must show total number of ratings
+4. Interface must update in real-time when new ratings are added
+5. Design must be consistent with the application's visual style
+6. Display must be responsive and work on mobile
+7. Restaurants without ratings must show appropriate state
+8. Format must be accessible and follow UI best practices
+
+## Tasks / Subtasks
+- [ ] Task 1: Implement automatic rating calculation (AC: 1)
+  - [ ] Create rating calculation service
+  - [ ] Implement average calculation algorithm
+  - [ ] Add real-time calculation triggers
+  - [ ] Ensure calculation accuracy and performance
+- [ ] Task 2: Create visual rating display (AC: 2, 5)
+  - [ ] Design star-based rating display system
+  - [ ] Implement visual rating indicators
+  - [ ] Add consistent styling with app design
+  - [ ] Create intuitive rating visualization
+- [ ] Task 3: Implement rating count display (AC: 3)
+  - [ ] Add total ratings counter
+  - [ ] Show number of ratings per restaurant
+  - [ ] Display rating statistics
+  - [ ] Handle zero ratings case appropriately
+- [ ] Task 4: Create real-time updates (AC: 4)
+  - [ ] Implement real-time UI updates
+  - [ ] Add event listeners for rating changes
+  - [ ] Create smooth update animations
+  - [ ] Ensure immediate feedback for users
+- [ ] Task 5: Develop responsive design (AC: 6)
+  - [ ] Implement mobile-friendly rating display
+  - [ ] Add responsive layout adjustments
+  - [ ] Test across different screen sizes
+  - [ ] Ensure touch-friendly interactions
+- [ ] Task 6: Handle edge cases (AC: 7)
+  - [ ] Create display for unrated restaurants
+  - [ ] Add "no ratings" state
+  - [ ] Handle missing rating data gracefully
+  - [ ] Provide helpful messaging
+- [ ] Task 7: Ensure accessibility (AC: 8)
+  - [ ] Add ARIA labels for rating displays
+  - [ ] Implement keyboard navigation
+  - [ ] Ensure screen reader compatibility
+  - [ ] Follow WCAG guidelines for rating displays
+
+## Dev Notes
+This story implements the rating calculation and display system that automatically computes and visualizes restaurant quality ratings in an intuitive, accessible, and responsive manner.
 
 ## Technical Implementation
 
@@ -618,28 +663,43 @@ exports.recalculateAllRatings = functions.https.onRequest(async (req, res) => {
 });
 ```
 
-## Dependencies
-- **Story 3.3**: Duplicate prevention logic for data integrity
-- **Story 1.3**: Restaurant card display system
-- **Story 0.3**: Real-time data synchronization
-- **Story 0.2**: Firebase SDK integration
+### Testing
+**Testing Checklist:**
+- Star display shows correct number of filled/empty stars
+- Half stars display properly for decimal ratings
+- Rating numbers format correctly (e.g., "4,5" instead of "4.5")
+- Real-time updates work when new ratings are added
+- Animation plays when ratings are updated
+- "No ratings" state displays correctly
+- Mobile responsiveness works properly
+- Performance is good even with many restaurants
+- Accessibility features are in place
+- Error handling is robust
 
-## Testing Checklist
-- [ ] Star display shows correct number of filled/empty stars
-- [ ] Half stars display properly for decimal ratings
-- [ ] Rating numbers format correctly (e.g., "4,5" instead of "4.5")
-- [ ] Real-time updates work when new ratings are added
-- [ ] Animation plays when ratings are updated
-- [ ] "No ratings" state displays correctly
-- [ ] Mobile responsiveness works properly
-- [ ] Performance is good even with many restaurants
-- [ ] Accessibility features are in place
-- [ ] Error handling is robust
+### Dependencies
+- Story 3.3: Duplicate prevention logic for data integrity
+- Story 1.3: Restaurant card display system
+- Story 0.3: Real-time data synchronization
+- Story 0.2: Firebase SDK integration
 
-## Notes
-- Esta história completa o sistema de avaliação com display visual atraente
-- A interface é intuitiva e segue padrões estabelecidos pelo mercado
-- Atualizações em tempo real melhoram a experiência do usuário
-- O sistema é escalável e performático
-- O design é consistente com o restante da aplicação
-- A implementação inclui tratamento robusto de erros
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

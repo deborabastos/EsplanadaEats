@@ -1,17 +1,52 @@
 # Story 3.3: Duplicate Prevention Logic
 
-## User Story
-Como sistema, eu preciso prevenir que usuários enviem múltiplas avaliações para o mesmo restaurante para garantir a integridade dos dados e a confiabilidade das médias de qualidade.
+## Status
+Draft
+
+## Story
+**As a** system,
+**I want** to prevent users from submitting multiple ratings for the same restaurant,
+**so that** data integrity and reliability of quality averages are maintained.
 
 ## Acceptance Criteria
-- [ ] Sistema deve detectar tentativas de avaliação duplicada
-- [ ] Usuários devem ser informados quando já avaliaram um restaurante
-- [ ] Prevenção deve funcionar mesmo após limpeza de cache/cookies
-- [ ] Interface do formulário deve ser desabilitada para usuários que já avaliaram
-- [ ] Mensagem clara deve informar sobre avaliação prévia
-- [ ] Sistema deve lidar com múltiplos dispositivos do mesmo usuário
-- [ ] Lógica de prevenção deve ser implementada no cliente e validada no servidor
-- [ ] Tempo de resposta para verificação deve ser mínimo (< 1 segundo)
+1. System must detect duplicate rating attempts
+2. Users must be informed when they have already rated a restaurant
+3. Prevention must work even after cache/cookies clearing
+4. Form interface must be disabled for users who have already rated
+5. Clear message must inform about previous rating
+6. System must handle multiple devices from the same user
+7. Prevention logic must be implemented on client and validated on server
+8. Response time for verification must be minimal (< 1 second)
+
+## Tasks / Subtasks
+- [ ] Task 1: Implement duplicate detection system (AC: 1, 8)
+  - [ ] Create duplicate detection query system
+  - [ ] Implement fast lookup for existing user ratings
+  - [ ] Add client-side caching for performance
+  - [ ] Ensure response time < 1 second for verification
+- [ ] Task 2: Create user notification system (AC: 2, 5)
+  - [ ] Design user-friendly duplicate notification messages
+  - [ ] Implement clear information about previous rating
+  - [ ] Add time-based context (when rating was made)
+  - [ ] Create consistent messaging across the application
+- [ ] Task 3: Develop robust identification system (AC: 3, 6)
+  - [ ] Implement multi-factor user identification
+  - [ ] Add device fingerprinting for cross-device detection
+  - [ ] Create fallback mechanisms for privacy modes
+  - [ ] Ensure prevention works after cache clearing
+- [ ] Task 4: Implement form interface controls (AC: 4)
+  - [ ] Disable rating form for existing ratings
+  - [ ] Show previous rating visually in the interface
+  - [ ] Prevent form submission when duplicate detected
+  - [ ] Maintain accessibility for disabled form states
+- [ ] Task 5: Create server-side validation (AC: 7)
+  - [ ] Implement Firebase security rules for duplicate prevention
+  - [ ] Add server-side validation as backup to client-side
+  - [ ] Create audit logging for rating attempts
+  - [ ] Ensure data consistency across concurrent operations
+
+## Dev Notes
+This story implements comprehensive duplicate prevention logic that ensures data integrity by preventing multiple ratings from the same user for the same restaurant, using multiple identification methods and both client-side and server-side validation.
 
 ## Technical Implementation
 
@@ -455,28 +490,43 @@ class RatingFormErrorHandler {
 }
 ```
 
-## Dependencies
-- **Story 3.1**: User identification system for userId generation
-- **Story 3.2**: Rating form interface for integration
-- **Story 0.2**: Firebase SDK integration for database operations
-- **Story 0.4**: Security rules for data protection
+### Testing
+**Testing Checklist:**
+- Duplicate detection works for same user on same restaurant
+- Cache improves performance for repeated checks
+- Form is properly disabled when duplicate detected
+- Error messages are clear and helpful
+- System handles network timeouts gracefully
+- Rating averages are calculated correctly after submission
+- Multiple device detection works as expected
+- Session persistence works across page reloads
+- Security rules prevent unauthorized access
+- Performance meets requirements (< 1s response time)
 
-## Testing Checklist
-- [ ] Duplicate detection works for same user on same restaurant
-- [ ] Cache improves performance for repeated checks
-- [ ] Form is properly disabled when duplicate detected
-- [ ] Error messages are clear and helpful
-- [ ] System handles network timeouts gracefully
-- [ ] Rating averages are calculated correctly after submission
-- [ ] Multiple device detection works as expected
-- [ ] Session persistence works across page reloads
-- [ ] Security rules prevent unauthorized access
-- [ ] Performance meets requirements (< 1s response time)
+### Dependencies
+- Story 3.1: User identification system for userId generation
+- Story 3.2: Rating form interface for integration
+- Story 0.2: Firebase SDK integration for database operations
+- Story 0.4: Security rules for data protection
 
-## Notes
-- Esta história implementa a lógica crítica de prevenção de avaliações duplicadas
-- O sistema utiliza múltiplas camadas de identificação para confiabilidade
-- Cache de cliente melhora a experiência do usuário
-- A atualização da média é automática e consistente
-- As regras de segurança garantem a integridade dos dados
-- O sistema foi projetado para ser escalável e performático
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

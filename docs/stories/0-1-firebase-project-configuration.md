@@ -1,51 +1,57 @@
 # Story 0.1: Firebase Project Configuration
 
-**As a developer, I want to configure Firebase project with Firestore and Storage, so that I have a cloud backend for data persistence and file storage.**
+## Status
+Draft
 
-## Overview
-This story establishes the foundational Firebase cloud infrastructure that will replace the localStorage-based system with a real-time, collaborative platform.
+## Story
+**As a** developer,
+**I want** to configure Firebase project with Firestore and Storage,
+**so that** I have a cloud backend for data persistence and file storage.
 
 ## Acceptance Criteria
+1. Firebase project created with Firestore database enabled
+2. Firebase Storage bucket configured for image uploads
+3. Firebase Security Rules established for restaurants and reviews collections
+4. Firebase project configuration file (firebase-config.js) created
+5. Offline persistence enabled for Firestore operations
 
-### AC 1.1: Firebase project created with Firestore database enabled
-- [ ] Create Firebase project in Firebase Console
-- [ ] Enable Firestore database in test mode
-- [ ] Configure database location (e.g., us-central1)
-- [ ] Verify Firestore database is accessible and operational
+## Tasks / Subtasks
+- [ ] Task 1: Create Firebase project and enable services (AC: 1, 2)
+  - [ ] Create Firebase project in Firebase Console
+  - [ ] Enable Firestore database in test mode
+  - [ ] Configure database location (us-central1)
+  - [ ] Enable Firebase Storage for project
+  - [ ] Create storage bucket for restaurant photos
+  - [ ] Configure storage bucket location to match Firestore region
+  - [ ] Verify Firestore and Storage are accessible and operational
+- [ ] Task 2: Configure Firebase Security Rules (AC: 3)
+  - [ ] Create Firestore security rules for restaurants collection
+  - [ ] Create Firestore security rules for reviews collection
+  - [ ] Create Firebase Storage security rules for image uploads
+  - [ ] Configure rules to allow read/write access with validation
+  - [ ] Verify rules prevent unauthorized access
+- [ ] Task 3: Create Firebase configuration file (AC: 4)
+  - [ ] Generate Firebase project configuration from Firebase Console
+  - [ ] Create firebase-config.js file with project credentials
+  - [ ] Include all necessary Firebase service configurations
+  - [ ] Add proper documentation to configuration file
+- [ ] Task 4: Enable offline persistence (AC: 5)
+  - [ ] Configure Firestore offline persistence in SDK initialization
+  - [ ] Enable offline data caching for restaurant data
+  - [ ] Enable offline data caching for review data
+  - [ ] Configure automatic sync when connection is restored
 
-### AC 1.2: Firebase Storage bucket configured for image uploads
-- [ ] Enable Firebase Storage in Firebase project
-- [ ] Create storage bucket for restaurant photos
-- [ ] Configure storage bucket location to match Firestore region
-- [ ] Verify storage bucket is accessible and ready for file uploads
+## Dev Notes
+This story establishes the foundational Firebase cloud infrastructure that will replace the localStorage-based system with a real-time, collaborative platform.
 
-### AC 1.3: Firebase Security Rules established for restaurants and reviews collections
-- [ ] Create Firestore security rules for restaurants collection
-- [ ] Create Firestore security rules for reviews collection
-- [ ] Create Firebase Storage security rules for image uploads
-- [ ] Rules allow read/write access with proper validation
-- [ ] Rules prevent unauthorized data access and manipulation
+### Technical Implementation Details
+**Firebase Project Setup:**
+- Project name: "esplanada-eats"
+- Database: Firestore in test mode
+- Location: us-central1
+- Storage: Cloud Storage with default bucket naming
 
-### AC 1.4: Firebase project configuration file (firebase-config.js) created
-- [ ] Generate Firebase project configuration from Firebase Console
-- [ ] Create firebase-config.js file with project credentials
-- [ ] Include all necessary Firebase service configurations
-- [ ] Configuration file is properly structured and documented
-
-### AC 1.5: Offline persistence enabled for Firestore operations
-- [ ] Configure Firestore offline persistence in SDK initialization
-- [ ] Enable offline data caching for restaurant data
-- [ ] Enable offline data caching for review data
-- [ ] Configure automatic sync when connection is restored
-
-## Technical Implementation Details
-
-### Firebase Project Setup
-1. **Project Creation**: Create new Firebase project named "esplanada-eats"
-2. **Database Configuration**: Enable Firestore in test mode with location us-central1
-3. **Storage Setup**: Enable Cloud Storage with default bucket naming
-
-### Security Rules Implementation
+**Security Rules Implementation:**
 ```javascript
 // Firestore Rules
 rules_version = '2';
@@ -61,7 +67,7 @@ service cloud.firestore {
 }
 ```
 
-### Configuration File Structure
+**Configuration File Structure:**
 ```javascript
 // firebase-config.js
 const firebaseConfig = {
@@ -74,19 +80,27 @@ const firebaseConfig = {
 };
 ```
 
-## Dependencies
-- Firebase Console access
-- Google account with Firebase project creation permissions
-- Web browser for Firebase Console operations
+### Testing
+No specific testing requirements found in architecture docs for this infrastructure setup story.
 
-## Success Metrics
-- Firebase project successfully created and accessible
-- Firestore database operational and responding to queries
-- Storage bucket ready for file uploads
-- Security rules properly configured and active
-- Configuration file ready for SDK integration
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
 
-## Notes
-- Initial setup uses test mode security rules for development
-- Production security rules will be enhanced in subsequent stories
-- All Firebase services must be in the same geographic region for optimal performance
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

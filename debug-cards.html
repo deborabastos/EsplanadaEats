@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug de Cards - Esplanada Eats</title>
+    <link rel="stylesheet" href="styles.css?v=1.0.0">
+    <style>
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .test-content {
+            background: lightcoral;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .empty-content {
+            background: lightblue;
+            padding: 2px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info" id="debug-info">
+        <div>Tamanho: <span id="width">0</span> x <span id="height">0</span></div>
+        <div>Breakpoint: <span id="breakpoint">Detectando...</span></div>
+    </div>
+
+    <header class="app-header">
+        <h1>Debug de Restaurant Cards</h1>
+        <p>Testando diferentes conteúdos de cards</p>
+    </header>
+
+    <main class="app-main">
+        <section class="restaurants-section">
+            <div class="section-header">
+                <h2>Cards com Conteúdo Completo</h2>
+            </div>
+            <div class="restaurants-grid" id="grid-completo">
+                <!-- Cards completos -->
+            </div>
+
+            <div class="section-header">
+                <h2>Cards com Conteúdo Mínimo</h2>
+            </div>
+            <div class="restaurants-grid" id="grid-minimo">
+                <!-- Cards mínimos -->
+            </div>
+
+            <div class="section-header">
+                <h2>Cards Vazios</h2>
+            </div>
+            <div class="restaurants-grid" id="grid-vazio">
+                <!-- Cards vazios -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Mock restaurant data
+        const restaurantCompleto = {
+            id: '1',
+            name: 'Restaurante Teste Completo',
+            description: 'Descrição completa do restaurante com todos os campos preenchidos',
+            category: 'Comida Brasileira',
+            averageQuality: 4.5,
+            totalRatings: 25,
+            priceRange: '$$$',
+            vegetarianOptions: 'Sim',
+            photoUrl: null
+        };
+
+        const restaurantMinimo = {
+            id: '2',
+            name: 'Restaurante Mínimo',
+            description: '',
+            category: '',
+            averageQuality: 0,
+            totalRatings: 0,
+            priceRange: '',
+            vegetarianOptions: '',
+            photoUrl: null
+        };
+
+        function createSimpleCard(content, type) {
+            const card = document.createElement('article');
+            card.className = 'restaurant-card';
+            card.setAttribute('data-restaurant-id', type);
+
+            if (type === 'completo') {
+                card.innerHTML = `
+                    <div class="restaurant-card-header">
+                        <h3>${content.name}</h3>
+                        <div class="rating">⭐ ${content.averageQuality} (${content.totalRatings})</div>
+                    </div>
+                    <div class="restaurant-card-body">
+                        <div class="description">${content.description}</div>
+                        <div class="restaurant-meta">
+                            <div class="meta-item">
+                                <span class="meta-icon">🍽️</span>
+                                <span>${content.category}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">💰</span>
+                                <span>${content.priceRange}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'minimo') {
+                card.innerHTML = `
+                    <div class="restaurant-card-header">
+                        <h3>${content.name}</h3>
+                    </div>
+                    <div class="restaurant-card-body">
+                        <div class="test-content">Conteúdo mínimo</div>
+                    </div>
+                `;
+            } else if (type === 'vazio') {
+                card.innerHTML = `
+                    <div class="empty-content">Card vazio - apenas isto</div>
+                `;
+            }
+
+            return card;
+        }
+
+        function populateGrids() {
+            // Grid completo
+            const gridCompleto = document.getElementById('grid-completo');
+            for (let i = 0; i < 4; i++) {
+                gridCompleto.appendChild(createSimpleCard(restaurantCompleto, 'completo'));
+            }
+
+            // Grid mínimo
+            const gridMinimo = document.getElementById('grid-minimo');
+            for (let i = 0; i < 4; i++) {
+                gridMinimo.appendChild(createSimpleCard(restaurantMinimo, 'minimo'));
+            }
+
+            // Grid vazio
+            const gridVazio = document.getElementById('grid-vazio');
+            for (let i = 0; i < 4; i++) {
+                gridVazio.appendChild(createSimpleCard({}, 'vazio'));
+            }
+        }
+
+        function updateDebugInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            document.getElementById('width').textContent = width;
+            document.getElementById('height').textContent = height;
+
+            let breakpoint = 'Mobile';
+            if (width >= 1400) {
+                breakpoint = 'Extra Extra Large';
+            } else if (width >= 1200) {
+                breakpoint = 'Extra Large';
+            } else if (width >= 1024) {
+                breakpoint = 'Large';
+            } else if (width >= 768) {
+                breakpoint = 'Medium';
+            } else if (width >= 576) {
+                breakpoint = 'Small';
+            }
+
+            document.getElementById('breakpoint').textContent = breakpoint;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateGrids();
+            updateDebugInfo();
+
+            window.addEventListener('resize', updateDebugInfo);
+        });
+    </script>
+</body>
+</html>

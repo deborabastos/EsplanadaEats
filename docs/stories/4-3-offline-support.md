@@ -1,17 +1,60 @@
 # Story 4.3: Offline Support
 
-## User Story
-Como usuário, eu quero poder acessar e interagir com o aplicativo mesmo quando estou sem conexão com a internet para poder visualizar restaurantes e avaliar em qualquer lugar, sincronizando meus dados quando a conexão for restabelecida.
+## Status
+Draft
+
+## Story
+**As a** user,
+**I want** to access and interact with the application even when I'm without internet connection,
+**so that** I can view restaurants and rate them anywhere, synchronizing my data when connection is restored.
 
 ## Acceptance Criteria
-- [ ] Aplicativo deve carregar sem conexão com a internet
-- [ ] Restaurantes devem ser visualizáveis offline
-- [ ] Avaliações podem ser enviadas offline e sincronizadas depois
-- [ ] Interface deve mostrar estado offline/online claramente
-- [ ] Dados devem persistir entre sessões offline
-- [ ] Sincronização deve acontecer automaticamente quando online
-- [ ] Conflitos de sincronização devem ser resolvidos corretamente
-- [ ] Usuário deve ser informado sobre status de sincronização
+1. Application must load without internet connection
+2. Restaurants must be viewable offline
+3. Ratings can be submitted offline and synchronized later
+4. Interface must clearly show offline/online status
+5. Data must persist between offline sessions
+6. Synchronization must happen automatically when online
+7. Synchronization conflicts must be resolved correctly
+8. User must be informed about synchronization status
+
+## Tasks / Subtasks
+- [ ] Task 1: Implement Service Worker for offline functionality (AC: 1, 5)
+  - [ ] Create service worker file with caching strategies
+  - [ ] Cache static assets for offline loading
+  - [ ] Implement fallback to offline page
+  - [ ] Set up cache management and updates
+  - [ ] Handle different types of requests appropriately
+- [ ] Task 2: Create offline data management system (AC: 2, 5)
+  - [ ] Implement IndexedDB for local data storage
+  - [ ] Create restaurants caching mechanism
+  - [ ] Set up data persistence between sessions
+  - [ ] Implement data retrieval from cache
+  - [ ] Handle cache updates and invalidation
+- [ ] Task 3: Implement offline rating submission (AC: 3, 8)
+  - [ ] Create offline rating queue system
+  - [ ] Store ratings locally when offline
+  - [ ] Implement background sync for queued ratings
+  - [ ] Show user feedback for offline actions
+  - [ ] Handle rating submission conflicts
+- [ ] Task 4: Create offline/online status indicators (AC: 4, 8)
+  - [ ] Implement connectivity detection
+  - [ ] Create visual status indicators
+  - [ ] Show synchronization progress
+  - [ ] Display pending sync count
+  - [ ] Handle status changes smoothly
+- [ ] Task 5: Implement automatic synchronization (AC: 6, 7)
+  - [ ] Create sync queue management
+  - [ ] Implement background sync registration
+  - [ ] Handle conflict resolution strategies
+  - [ ] Set up retry mechanisms for failed sync
+  - [ ] Provide sync success/error feedback
+- [ ] Task 6: Create offline UI and experience (AC: 1, 2, 4)
+  - [ ] Design offline-friendly interface
+  - [ ] Create offline page with cached data
+  - [ ] Implement offline-specific features
+  - [ ] Ensure responsive design works offline
+  - [ ] Test complete offline user journey
 
 ## Technical Implementation
 
@@ -1060,11 +1103,45 @@ body:not(.offline) .offline-only {
 - [ ] Performance is acceptable offline
 - [ ] All browsers support offline features
 
-## Notes
-- Esta história implementa suporte robusto para uso offline
-- O aplicativo continua funcional sem conexão com a internet
-- A sincronização é automática e transparente para o usuário
-- Os dados são persistentes e consistentes
-- A interface mostra claramente o estado offline/online
-- O sistema é escalável e confiável
-- A experiência do usuário é mantida mesmo offline
+## Dev Notes
+This story implements robust offline support allowing users to continue using the application without internet connection, with automatic synchronization when connection is restored.
+
+### Dependencies
+- **Story 4.1**: Performance optimization for offline performance
+- **Story 0.2**: Firebase SDK integration for data synchronization
+- **Story 3.3**: Duplicate prevention logic for offline rating handling
+
+### Testing
+**Testing Checklist:**
+- Service worker registers correctly
+- App loads without internet connection
+- Offline page shows cached data
+- Ratings can be submitted offline
+- Sync happens automatically when online
+- Offline/online indicators work correctly
+- Data persists between sessions
+- Conflicts are resolved properly
+- Performance is acceptable offline
+- All browsers support offline features
+
+## Change Log
+| Date | Version | Description | Author |
+|------|---------|-------------|---------|
+| 2025-09-30 | 1.0 | Initial story creation with BMad framework | Dev Agent |
+
+## Dev Agent Record
+
+### Agent Model Used
+*To be populated by development agent*
+
+### Debug Log References
+*To be populated by development agent*
+
+### Completion Notes List
+*To be populated by development agent*
+
+### File List
+*To be populated by development agent*
+
+## QA Results
+*To be populated by QA agent*

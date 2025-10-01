@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Avaliações e Restaurantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .restaurant-item, .rating-item {
+            background: white;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .restaurant-item h4, .rating-item h4 {
+            margin: 0 0 0.5rem 0;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug - Avaliações e Restaurantes</h1>
+
+        <div>
+            <button class="btn" onclick="debugRestaurants()">Verificar Restaurantes</button>
+            <button class="btn" onclick="debugRatings()">Verificar Avaliações</button>
+            <button class="btn" onclick="debugConnections()">Verificar Conexões</button>
+            <button class="btn" onclick="fixRatingCounts()">Corrigir Contagens</button>
+            <button class="btn" onclick="createTestData()">Criar Dados Teste</button>
+            <button class="btn" onclick="clearDebug()">Limpar Console</button>
+        </div>
+
+        <div class="grid">
+            <div class="section">
+                <h3>📊 Restaurantes</h3>
+                <div id="restaurants-list"></div>
+            </div>
+            <div class="section">
+                <h3>⭐ Avaliações</h3>
+                <div id="ratings-list"></div>
+            </div>
+        </div>
+
+        <div id="log" class="log">Console de debug aguardando comandos...</div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js?v=2.1.0"></script>
+
+    <script type="module">
+        import { StorageService } from './js/services/storage-service.js?v=2.1.0';
+
+        const logDiv = document.getElementById('log');
+        const restaurantsDiv = document.getElementById('restaurants-list');
+        const ratingsDiv = document.getElementById('ratings-list');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.debugRestaurants = async function() {
+            try {
+                log('🔍 Verificando restaurantes...', 'info');
+                restaurantsDiv.innerHTML = '';
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+                const restaurants = await storageService.getRestaurants();
+
+                log(`📊 Encontrados ${restaurants.length} restaurantes`, restaurants.length > 0 ? 'success' : 'warning');
+
+                restaurants.forEach(restaurant => {
+                    const div = document.createElement('div');
+                    div.className = 'restaurant-item';
+                    div.innerHTML = `
+                        <h4>${restaurant.name}</h4>
+                        <div><strong>ID:</strong> ${restaurant.id}</div>
+                        <div><strong>Avaliação Média:</strong> ${restaurant.averageQuality || 0}</div>
+                        <div><strong>Total de Avaliações:</strong> ${restaurant.totalRatings || 0}</div>
+                        <div><strong>Preço:</strong> ${restaurant.price || 0}</div>
+                        <div><strong>Categoria:</strong> ${restaurant.category || 'N/A'}</div>
+                        <div><strong>Distribuição:</strong> ${JSON.stringify(restaurant.ratingDistribution || {})}</div>
+                    `;
+                    restaurantsDiv.appendChild(div);
+
+                    log(`📊 ${restaurant.name}: ${restaurant.totalRatings || 0} avaliações, média ${(restaurant.averageQuality || 0).toFixed(1)}`);
+                });
+
+                if (restaurants.length === 0) {
+                    restaurantsDiv.innerHTML = '<p>Nenhum restaurante encontrado</p>';
+                    log('⚠️ Nenhum restaurante encontrado', 'warning');
+                }
+
+            } catch (error) {
+                log(`❌ Erro ao verificar restaurantes: ${error.message}`, 'error');
+            }
+        };
+
+        window.debugRatings = async function() {
+            try {
+                log('⭐ Verificando avaliações...', 'info');
+                ratingsDiv.innerHTML = '';
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+                const ratings = await storageService.getAllRatings();
+
+                log(`📊 Encontradas ${ratings.length} avaliações`, ratings.length > 0 ? 'success' : 'warning');
+
+                ratings.forEach(rating => {
+                    const div = document.createElement('div');
+                    div.className = 'rating-item';
+                    div.innerHTML = `
+                        <h4>Avaliação de ${rating.userName}</h4>
+                        <div><strong>ID:</strong> ${rating.id}</div>
+                        <div><strong>Restaurante ID:</strong> ${rating.restaurantId}</div>
+                        <div><strong>Nota:</strong> ${rating.rating || rating.quality || 0}</div>
+                        <div><strong>Comentário:</strong> ${rating.comment || 'N/A'}</div>
+                        <div><strong>Status:</strong> ${rating.moderationStatus || 'N/A'}</div>
+                        <div><strong>Data:</strong> ${rating.createdAt ? new Date(rating.createdAt.toDate()).toLocaleString() : 'N/A'}</div>
+                    `;
+                    ratingsDiv.appendChild(div);
+
+                    log(`⭐ ${rating.userName}: ${rating.rating || rating.quality || 0} estrelas para ${rating.restaurantId}`);
+                });
+
+                if (ratings.length === 0) {
+                    ratingsDiv.innerHTML = '<p>Nenhuma avaliação encontrada</p>';
+                    log('⚠️ Nenhuma avaliação encontrada', 'warning');
+                }
+
+            } catch (error) {
+                log(`❌ Erro ao verificar avaliações: ${error.message}`, 'error');
+            }
+        };
+
+        window.debugConnections = async function() {
+            try {
+                log('🔗 Verificando conexões entre avaliações e restaurantes...', 'info');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+                const restaurants = await storageService.getRestaurants();
+                const ratings = await storageService.getAllRatings();
+
+                // Group ratings by restaurant
+                const ratingsByRestaurant = {};
+                ratings.forEach(rating => {
+                    if (!ratingsByRestaurant[rating.restaurantId]) {
+                        ratingsByRestaurant[rating.restaurantId] = [];
+                    }
+                    ratingsByRestaurant[rating.restaurantId].push(rating);
+                });
+
+                log('📊 Análise de conexões:', 'info');
+
+                restaurants.forEach(restaurant => {
+                    const restaurantRatings = ratingsByRestaurant[restaurant.id] || [];
+                    const actualCount = restaurantRatings.length;
+                    const reportedCount = restaurant.totalRatings || 0;
+
+                    const status = actualCount === reportedCount ? '✅' : '❌';
+                    log(`${status} ${restaurant.name}: ${actualCount} avaliações reais vs ${reportedCount} reportadas`);
+
+                    if (actualCount !== reportedCount) {
+                        log(`   🔧 Discrepância detectada! Restaurantes ID: ${restaurant.id}`, 'warning');
+                    }
+                });
+
+                // Check for orphaned ratings
+                const restaurantIds = new Set(restaurants.map(r => r.id));
+                const orphanedRatings = ratings.filter(r => !restaurantIds.has(r.restaurantId));
+
+                if (orphanedRatings.length > 0) {
+                    log(`⚠️ Encontradas ${orphanedRatings.length} avaliações órfãs (sem restaurante)`, 'warning');
+                    orphanedRatings.forEach(rating => {
+                        log(`   Avaliação ${rating.id} para restaurante inexistente: ${rating.restaurantId}`, 'warning');
+                    });
+                }
+
+            } catch (error) {
+                log(`❌ Erro ao verificar conexões: ${error.message}`, 'error');
+            }
+        };
+
+        window.fixRatingCounts = async function() {
+            try {
+                log('🔧 Corrigindo contagens de avaliações...', 'info');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+                const restaurants = await storageService.getRestaurants();
+
+                let fixedCount = 0;
+
+                for (const restaurant of restaurants) {
+                    try {
+                        log(`🔧 Atualizando restaurante: ${restaurant.name}`);
+                        await storageService.updateRestaurantAverageRating(restaurant.id);
+                        fixedCount++;
+                        log(`✅ ${restaurant.name} atualizado`, 'success');
+                    } catch (error) {
+                        log(`❌ Erro ao atualizar ${restaurant.name}: ${error.message}`, 'error');
+                    }
+                }
+
+                log(`🎉 ${fixedCount} restaurantes atualizados com sucesso!`, 'success');
+
+                // Refresh displays
+                await debugRestaurants();
+                await debugRatings();
+
+            } catch (error) {
+                log(`❌ Erro ao corrigir contagens: ${error.message}`, 'error');
+            }
+        };
+
+        window.createTestData = async function() {
+            try {
+                log('🧪 Criando dados de teste...', 'info');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                // Create a test restaurant
+                const restaurantData = {
+                    name: 'Restaurante Debug Teste',
+                    description: 'Restaurante criado para debug',
+                    address: 'Endereço Teste',
+                    phone: '(61) 9999-9999',
+                    category: 'Teste',
+                    price: 3,
+                    averageQuality: 0,
+                    totalRatings: 0,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const restaurantId = await storageService.createRestaurant(restaurantData);
+                log(`✅ Restaurante criado: ${restaurantId}`, 'success');
+
+                // Create multiple ratings for the restaurant
+                const testRatings = [
+                    { rating: 5, userName: 'Usuário 1', comment: 'Excelente!' },
+                    { rating: 4, userName: 'Usuário 2', comment: 'Muito bom!' },
+                    { rating: 3, userName: 'Usuário 3', comment: 'Regular' },
+                    { rating: 5, userName: 'Usuário 4', comment: 'Fantástico!' }
+                ];
+
+                for (let i = 0; i < testRatings.length; i++) {
+                    const ratingData = {
+                        restaurantId: restaurantId,
+                        rating: testRatings[i].rating,
+                        quality: testRatings[i].rating,
+                        userName: testRatings[i].userName,
+                        userFingerprint: `debug-fingerprint-${i}`,
+                        comment: testRatings[i].comment,
+                        moderationStatus: 'approved',
+                        isReported: false,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+
+                    await storageService.createRating(ratingData);
+                    log(`✅ Avaliação ${i + 1} criada: ${testRatings[i].rating} estrelas`, 'success');
+                }
+
+                // Update restaurant averages
+                await storageService.updateRestaurantAverageRating(restaurantId);
+                log(`✅ Média do restaurante atualizada`, 'success');
+
+                // Refresh displays
+                await debugRestaurants();
+                await debugRatings();
+
+                log('🎉 Dados de teste criados com sucesso!', 'success');
+
+            } catch (error) {
+                log(`❌ Erro ao criar dados de teste: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearDebug = function() {
+            logDiv.innerHTML = 'Console limpo...';
+        };
+
+        // Initialize
+        log('🚀 Ferramenta de debug carregada');
+        log('📋 Use os botões para investigar e corrigir problemas com avaliações');
+    </script>
+</body>
+</html>

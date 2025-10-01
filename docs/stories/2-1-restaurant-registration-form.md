@@ -1,55 +1,63 @@
 # Story 2.1: Restaurant Registration Form
 
-**As a restaurant owner, I want to register my restaurant with all required information, so that users can discover and evaluate my establishment.**
+## Status
+Completed
 
-## Overview
-This story implements the restaurant registration form that allows restaurant owners to add their establishments to the platform with all necessary information and validation.
+## Story
+**As a** restaurant owner,
+**I want** to register my restaurant with all required information,
+**so that** users can discover and evaluate my establishment.
 
 ## Acceptance Criteria
+1. Registration modal with all mandatory fields (name, hours, price, quality, vegetarian options, access)
+2. Optional fields for description and photos
+3. Real-time validation with visual feedback (red highlighting) for errors
+4. Form validation includes minimum 4 characters for name, positive price values, 0-5 star ratings
+5. Success message and new restaurant appears first in list after registration
 
-### AC 1.1: Registration modal with all mandatory fields (name, hours, price, quality, vegetarian options, access)
-- [ ] Create restaurant registration modal with proper structure
-- [ ] Include name field (mandatory, minimum 4 characters)
-- [ ] Add hours field for operating hours
-- [ ] Include price field (mandatory, positive values)
-- [ ] Add initial quality rating field (0-5 stars)
-- [ ] Include vegetarian options checkbox
-- [ ] Add access information field
-- [ ] Ensure modal layout is organized and user-friendly
+## Tasks / Subtasks
+- [ ] Task 1: Create registration modal with mandatory fields (AC: 1)
+  - [ ] Create restaurant registration modal with proper structure
+  - [ ] Include name field (mandatory, minimum 4 characters)
+  - [ ] Add hours field for operating hours
+  - [ ] Include price field (mandatory, positive values)
+  - [ ] Add initial quality rating field (0-5 stars)
+  - [ ] Include vegetarian options checkbox
+  - [ ] Add access information field
+  - [ ] Ensure modal layout is organized and user-friendly
+- [ ] Task 2: Add optional fields for description and photos (AC: 2)
+  - [ ] Add description textarea for restaurant details
+  - [ ] Include photo upload section (up to 4 photos)
+  - [ ] Add photo preview functionality
+  - [ ] Include remove photo option for uploaded images
+  - [ ] Add drag-and-drop support for photo uploads
+  - [ ] Ensure optional fields are clearly marked as such
+- [ ] Task 3: Implement real-time validation with visual feedback (AC: 3)
+  - [ ] Implement real-time field validation
+  - [ ] Add visual feedback for validation errors (red borders/highlighting)
+  - [ ] Include inline error messages below each field
+  - [ ] Add validation status indicators (success/error)
+  - [ ] Implement field-specific validation rules
+  - [ ] Ensure error messages are clear and helpful
+- [ ] Task 4: Implement comprehensive form validation (AC: 4)
+  - [ ] Validate name field with minimum 4 characters
+  - [ ] Validate price field for positive values
+  - [ ] Validate quality rating field for 0-5 range
+  - [ ] Add character counter for name field
+  - [ ] Include input masking for price field
+  - [ ] Add visual star rating interface for quality
+- [ ] Task 5: Implement success handling and list integration (AC: 5)
+  - [ ] Implement success notification system
+  - [ ] Add new restaurant to top of restaurant list
+  - [ ] Include smooth animation for new restaurant addition
+  - [ ] Auto-close modal after successful submission
+  - [ ] Show loading state during form submission
+  - [ ] Handle errors gracefully with user-friendly messages
 
-### AC 1.2: Optional fields for description and photos
-- [ ] Add description textarea for restaurant details
-- [ ] Include photo upload section (up to 4 photos)
-- [ ] Add photo preview functionality
-- [ ] Include remove photo option for uploaded images
-- [ ] Add drag-and-drop support for photo uploads
-- [ ] Ensure optional fields are clearly marked as such
+## Dev Notes
+This story implements the restaurant registration form that allows restaurant owners to add their establishments to the platform with all necessary information and validation.
 
-### AC 1.3: Real-time validation with visual feedback (red highlighting) for errors
-- [ ] Implement real-time field validation
-- [ ] Add visual feedback for validation errors (red borders/highlighting)
-- [ ] Include inline error messages below each field
-- [ ] Add validation status indicators (success/error)
-- [ ] Implement field-specific validation rules
-- [ ] Ensure error messages are clear and helpful
-
-### AC 1.4: Form validation includes minimum 4 characters for name, positive price values, 0-5 star ratings
-- [ ] Validate name field with minimum 4 characters
-- [ ] Validate price field for positive values
-- [ ] Validate quality rating field for 0-5 range
-- [ ] Add character counter for name field
-- [ ] Include input masking for price field
-- [ ] Add visual star rating interface for quality
-
-### AC 1.5: Success message and new restaurant appears first in list after registration
-- [ ] Implement success notification system
-- [ ] Add new restaurant to top of restaurant list
-- [ ] Include smooth animation for new restaurant addition
-- [ ] Auto-close modal after successful submission
-- [ ] Show loading state during form submission
-- [ ] Handle errors gracefully with user-friendly messages
-
-## Technical Implementation Details
+### Technical Implementation Details
 
 ### Restaurant Registration Form Component
 

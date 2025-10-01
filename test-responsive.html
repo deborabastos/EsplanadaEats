@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+    <title>Responsive Design Test - Esplanada Eats</title>
+    <link rel="stylesheet" href="styles.css?v=1.0.0">
+    <style>
+        /* Additional test styles */
+        .test-container {
+            padding: var(--spacing-md);
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+        }
+
+        .test-section {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .test-card {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: var(--spacing-md);
+            min-height: var(--touch-target-min);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .breakpoint-indicator {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--spacing-sm);
+            font-family: monospace;
+            font-size: 0.875rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .orientation-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--success-color);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--spacing-sm);
+            font-family: monospace;
+            font-size: 0.875rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .viewport-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: var(--secondary-color);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--spacing-sm);
+            font-family: monospace;
+            font-size: 0.75rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .responsive-test {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .responsive-item {
+            flex: 1;
+            min-width: 200px;
+            background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+            color: white;
+            padding: var(--spacing-md);
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .responsive-test {
+                flex-direction: column;
+            }
+
+            .responsive-item {
+                min-width: auto;
+            }
+        }
+
+        .typography-test {
+            line-height: var(--line-height-base);
+        }
+
+        .touch-test {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .touch-target {
+            min-width: var(--touch-target-min);
+            min-height: var(--touch-target-min);
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-duration) var(--transition-timing);
+        }
+
+        .touch-target:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="breakpoint-indicator" id="breakpoint-indicator">
+        <span id="current-breakpoint">Loading...</span>
+    </div>
+
+    <div class="orientation-indicator" id="orientation-indicator">
+        <span id="current-orientation">Loading...</span>
+    </div>
+
+    <div class="viewport-info" id="viewport-info">
+        <span id="viewport-dimensions">Loading...</span>
+    </div>
+
+    <header class="app-header">
+        <h1>Responsive Design Test</h1>
+        <p>Testing responsive behaviors across different devices and screen sizes</p>
+    </header>
+
+    <main class="app-main">
+        <div class="test-container">
+            <div class="test-section">
+                <h2>Breakpoint Testing</h2>
+                <p>Current breakpoint: <strong id="breakpoint-display">Detecting...</strong></p>
+                <p>Viewport size: <strong id="viewport-display">Detecting...</strong></p>
+
+                <div class="test-grid">
+                    <div class="test-card">Mobile (0-767px)</div>
+                    <div class="test-card">Tablet (768-1023px)</div>
+                    <div class="test-card">Desktop (1024-1279px)</div>
+                    <div class="test-card">Wide (1280px+)</div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Responsive Typography</h2>
+                <div class="typography-test">
+                    <h1>Heading 1 - Responsive Size</h1>
+                    <h2>Heading 2 - Responsive Size</h2>
+                    <h3>Heading 3 - Responsive Size</h3>
+                    <h4>Heading 4 - Responsive Size</h4>
+                    <p>This paragraph text should scale appropriately across different screen sizes. The line height and spacing should remain optimal for readability.</p>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Touch Target Testing</h2>
+                <p>Test touch-friendly button sizes (minimum 44x44px on mobile):</p>
+                <div class="touch-test">
+                    <button class="touch-target">Button 1</button>
+                    <button class="touch-target">Button 2</button>
+                    <button class="touch-target">Button 3</button>
+                    <button class="touch-target">Button 4</button>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Responsive Grid Layout</h2>
+                <div class="responsive-test">
+                    <div class="responsive-item">Flexible Item 1</div>
+                    <div class="responsive-item">Flexible Item 2</div>
+                    <div class="responsive-item">Flexible Item 3</div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Spacing System Test</h2>
+                <p>Testing responsive spacing variables:</p>
+                <div style="background: var(--background-color); padding: var(--spacing-xs); margin: var(--spacing-xs) 0;">
+                    Extra Small Padding
+                </div>
+                <div style="background: var(--background-color); padding: var(--spacing-sm); margin: var(--spacing-sm) 0;">
+                    Small Padding
+                </div>
+                <div style="background: var(--background-color); padding: var(--spacing-md); margin: var(--spacing-md) 0;">
+                    Medium Padding
+                </div>
+                <div style="background: var(--background-color); padding: var(--spacing-lg); margin: var(--spacing-lg) 0;">
+                    Large Padding
+                </div>
+                <div style="background: var(--background-color); padding: var(--spacing-xl); margin: var(--spacing-xl) 0;">
+                    Extra Large Padding
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Device Detection</h2>
+                <p>Touch device: <strong id="touch-device">Detecting...</strong></p>
+                <p>Device pixel ratio: <strong id="pixel-ratio">Detecting...</strong></p>
+                <p>Connection type: <strong id="connection-type">Detecting...</strong></p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { responsiveSystem } from './js/utils/responsive-system.js';
+
+        // Initialize responsive system
+        responsiveSystem.initialize();
+
+        // Update indicators
+        function updateIndicators() {
+            const breakpoint = responsiveSystem.getCurrentBreakpoint();
+            const orientation = responsiveSystem.getCurrentOrientation();
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const isTouch = responsiveSystem.isTouch();
+            const pixelRatio = window.devicePixelRatio || 1;
+
+            document.getElementById('current-breakpoint').textContent = breakpoint;
+            document.getElementById('breakpoint-display').textContent = breakpoint;
+            document.getElementById('current-orientation').textContent = orientation;
+            document.getElementById('viewport-dimensions').textContent = `${width}x${height}`;
+            document.getElementById('viewport-display').textContent = `${width} × ${height}px`;
+            document.getElementById('touch-device').textContent = isTouch ? 'Yes' : 'No';
+            document.getElementById('pixel-ratio').textContent = `${pixelRatio}x`;
+
+            // Connection type
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                document.getElementById('connection-type').textContent = connection.effectiveType || 'Unknown';
+            } else {
+                document.getElementById('connection-type').textContent = 'Not supported';
+            }
+        }
+
+        // Listen for changes
+        responsiveSystem.onBreakpointChange((oldBreakpoint, newBreakpoint) => {
+            console.log(`Breakpoint changed: ${oldBreakpoint} → ${newBreakpoint}`);
+            updateIndicators();
+        });
+
+        responsiveSystem.onBreakpointChange((breakpoint, orientation) => {
+            console.log(`Orientation changed: ${orientation}`);
+            updateIndicators();
+        });
+
+        // Initial update
+        updateIndicators();
+
+        // Update on resize
+        window.addEventListener('resize', () => {
+            updateIndicators();
+        });
+
+        // Update on orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateIndicators, 100);
+        });
+
+        console.log('Responsive test page initialized');
+        console.log('Current responsive system state:', {
+            breakpoint: responsiveSystem.getCurrentBreakpoint(),
+            orientation: responsiveSystem.getCurrentOrientation(),
+            isMobile: responsiveSystem.isMobile(),
+            isTablet: responsiveSystem.isTablet(),
+            isDesktop: responsiveSystem.isDesktop(),
+            isTouch: responsiveSystem.isTouch()
+        });
+    </script>
+</body>
+</html>

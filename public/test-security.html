@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Firebase Security Rules</title>
+    <meta name="description" content="Test Firebase Security Rules and validation">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../src/styles.css">
+
+    <!-- Security Services -->
+    <script src="../src/input-validator.js"></script>
+    <script src="../src/rate-limiter.js"></script>
+
+    <!-- Firebase Configuration (embedded) -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL8Juo6PJQtFJx1KoJU7KGlc_OndCF3Ls",
+            authDomain: "esplanada-eats.firebaseapp.com",
+            projectId: "esplanada-eats",
+            storageBucket: "esplanada-eats.firebasestorage.app",
+            messagingSenderId: "403394772779",
+            appId: "1:403394772779:web:8db461c61fc21f9e418f6e"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize services
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const auth = firebase.auth();
+
+        // Database references
+        const restaurantsRef = db.collection('restaurants');
+        const reviewsRef = db.collection('reviews');
+        const userTrackingRef = db.collection('userTracking');
+        const rateLimitsRef = db.collection('rateLimits');
+
+        // Global variables
+        let currentUser = null;
+        let testResults = [];
+
+        // Initialize Firebase Authentication with error handling
+        try {
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                updateAuthStatus();
+            });
+        } catch (error) {
+            console.error('Firebase Authentication error:', error);
+            // Show auth configuration error
+            document.getElementById('auth-status').className = 'alert alert-danger';
+            document.getElementById('auth-status').textContent = '❌ Firebase Authentication não configurado';
+            document.getElementById('user-info').textContent = 'Erro: ' + error.message;
+        }
+
+        // Update authentication status
+        function updateAuthStatus() {
+            const authStatus = document.getElementById('auth-status');
+            const userInfo = document.getElementById('user-info');
+
+            if (currentUser) {
+                authStatus.className = 'alert alert-success';
+                authStatus.textContent = '✅ Autenticado';
+                userInfo.textContent = `Usuário: ${currentUser.email || currentUser.uid}`;
+            } else {
+                authStatus.className = 'alert alert-warning';
+                authStatus.textContent = '⚠️ Não autenticado';
+                userInfo.textContent = 'Visitante anônimo';
+            }
+        }
+
+        // Check if Firebase Authentication is enabled
+        async function checkAuthConfiguration() {
+            try {
+                // Try to call an auth method to check if it's configured
+                await auth.getRedirectResult();
+                return true;
+            } catch (error) {
+                return !error.message.includes('configuration-not-found');
+            }
+        }
+
+        // Check if security rules are deployed
+        async function checkSecurityRulesDeployment() {
+            try {
+                // Try to write to a collection that should be restricted
+                await db.collection('rateLimits').add({
+                    test: true,
+                    timestamp: Date.now()
+                });
+                return false; // If this succeeds, rules are not properly deployed
+            } catch (error) {
+                // If this fails with permission error, rules are working
+                return error.message.includes('permission-denied') ||
+                       error.message.includes('PERMISSION_DENIED');
+            }
+        }
+
+        // Test result logging
+        function addTestResult(test, result, details = '') {
+            const testResult = {
+                test,
+                result,
+                details,
+                timestamp: new Date().toISOString()
+            };
+
+            testResults.push(testResult);
+
+            const container = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `alert ${result === 'success' ? 'alert-success' : 'alert-danger'} mb-2`;
+            resultDiv.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>${test}</strong>
+                        ${details ? `<br><small>${details}</small>` : ''}
+                    </div>
+                    <div class="text-end">
+                        <small>${new Date().toLocaleTimeString()}</small>
+                    </div>
+                </div>
+            `;
+
+            container.insertBefore(resultDiv, container.firstChild);
+
+            // Keep only last 10 results
+            while (container.children.length > 10) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        // Restaurant Security Tests
+        async function testRestaurantSecurity() {
+            addTestResult('🍽️ Teste de Segurança - Restaurantes', 'info', 'Iniciando testes...');
+
+            // Test 1: Public read access
+            try {
+                const snapshot = await restaurantsRef.limit(1).get();
+                addTestResult('📖 Leitura pública de restaurantes', 'success', `Pode ler ${snapshot.size} restaurantes`);
+            } catch (error) {
+                addTestResult('📖 Leitura pública de restaurantes', 'error', error.message);
+            }
+
+            // Test 2: Create without authentication
+            try {
+                await restaurantsRef.add({
+                    name: 'Test Restaurant Security',
+                    averageQuality: 0,
+                    totalRatings: 0,
+                    price: 'R$ 30-50',
+                    hours: '12h00-23h00',
+                    vegetarianOptions: 'Algumas',
+                    access: 'Simples',
+                    description: 'Test restaurant for security validation - should fail without auth',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                addTestResult('🚫 Criar restaurante sem autenticação', 'error', 'Deveria falhar mas teve sucesso! (Regras não estão ativas)');
+            } catch (error) {
+                addTestResult('🚫 Criar restaurante sem autenticação', 'success', 'Corretamente bloqueado: ' + error.message);
+            }
+
+            // Test 3: Create with authentication
+            if (currentUser) {
+                try {
+                    const docRef = await restaurantsRef.add({
+                        name: 'Security Test Restaurant Authenticated',
+                        averageQuality: 0,
+                        totalRatings: 0,
+                        price: 'R$ 30-50',
+                        hours: '12h00-23h00',
+                        vegetarianOptions: 'Algumas',
+                        access: 'Simples',
+                        description: 'Test restaurant for security validation - authenticated',
+                        ownerId: currentUser.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    addTestResult('✅ Criar restaurante com autenticação', 'success', `ID: ${docRef.id}`);
+                } catch (error) {
+                    addTestResult('✅ Criar restaurante com autenticação', 'error', error.message);
+                }
+            } else {
+                addTestResult('✅ Criar restaurante com autenticação', 'info', 'Usuário não autenticado - teste pulado');
+            }
+        }
+
+        // Review Security Tests
+        async function testReviewSecurity() {
+            addTestResult('⭐ Teste de Segurança - Avaliações', 'info', 'Iniciando testes...');
+
+            // Test 1: Public read access
+            try {
+                const snapshot = await reviewsRef.limit(1).get();
+                addTestResult('📖 Leitura pública de avaliações', 'success', `Pode ler ${snapshot.size} avaliações`);
+            } catch (error) {
+                addTestResult('📖 Leitura pública de avaliações', 'error', error.message);
+            }
+
+            // Test 2: Create without authentication
+            try {
+                await reviewsRef.add({
+                    restaurantId: 'test-restaurant-security-id',
+                    quality: 5,
+                    price: 4,
+                    userName: 'Test User Security',
+                    userFingerprint: 'test-fingerprint-security',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                addTestResult('🚫 Criar avaliação sem autenticação', 'error', 'Deveria falhar mas teve sucesso! (Regras não estão ativas)');
+            } catch (error) {
+                addTestResult('🚫 Criar avaliação sem autenticação', 'success', 'Corretamente bloqueado: ' + error.message);
+            }
+
+            // Test 3: Create with authentication
+            if (currentUser) {
+                try {
+                    const docRef = await reviewsRef.add({
+                        restaurantId: 'test-restaurant-security-id',
+                        quality: 5,
+                        price: 4,
+                        userName: 'Test User Authenticated',
+                        userFingerprint: 'test-fingerprint-auth-' + Date.now(),
+                        userId: currentUser.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    addTestResult('✅ Criar avaliação com autenticação', 'success', `ID: ${docRef.id}`);
+                } catch (error) {
+                    addTestResult('✅ Criar avaliação com autenticação', 'error', error.message);
+                }
+            } else {
+                addTestResult('✅ Criar avaliação com autenticação', 'info', 'Usuário não autenticado - teste pulado');
+            }
+        }
+
+        // User Tracking Security Tests
+        async function testUserTrackingSecurity() {
+            addTestResult('👤 Teste de Segurança - Rastreamento', 'info', 'Iniciando testes...');
+
+            const testFingerprint = 'test-security-fingerprint';
+
+            // Test 1: Read without authentication
+            try {
+                const snapshot = await userTrackingRef
+                    .where('userFingerprint', '==', testFingerprint)
+                    .get();
+                addTestResult('🚫 Ler rastreamento sem autenticação', 'error', `Deveria falhar mas leu ${snapshot.size} registros`);
+            } catch (error) {
+                addTestResult('🚫 Ler rastreamento sem autenticação', 'success', 'Corretamente bloqueado');
+            }
+
+            // Test 2: Create tracking data
+            try {
+                const docRef = await userTrackingRef.add({
+                    userFingerprint: testFingerprint,
+                    restaurantId: 'test-restaurant-id',
+                    hasReviewed: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                addTestResult('📝 Criar rastreamento', 'success', `ID: ${docRef.id}`);
+            } catch (error) {
+                addTestResult('📝 Criar rastreamento', 'error', error.message);
+            }
+        }
+
+        // Rate Limiting Tests
+        async function testRateLimiting() {
+            addTestResult('⚡ Teste de Rate Limiting', 'info', 'Iniciando testes...');
+
+            if (!window.EsplanadaEatsRateLimiter) {
+                addTestResult('❌ Rate Limiter não disponível', 'error', 'Service not loaded');
+                return;
+            }
+
+            const testFingerprint = 'test-rate-limit-fingerprint';
+
+            try {
+                // Test 1: Check initial limit
+                const remaining = window.EsplanadaEatsRateLimiter.getRemainingActions(testFingerprint, 'reviewSubmission');
+                addTestResult('📊 Verificar limite inicial', 'success', `Avaliações restantes: ${remaining}`);
+
+                // Test 2: Use up some limits
+                for (let i = 0; i < 3; i++) {
+                    await window.EsplanadaEatsRateLimiter.checkRateLimit(testFingerprint, 'reviewSubmission');
+                }
+
+                const newRemaining = window.EsplanadaEatsRateLimiter.getRemainingActions(testFingerprint, 'reviewSubmission');
+                addTestResult('📊 Após 3 ações', 'success', `Avaliações restantes: ${newRemaining}`);
+
+                // Test 3: Check stats
+                const stats = window.EsplanadaEatsRateLimiter.getStats(testFingerprint);
+                addTestResult('📈 Estatísticas', 'success', `Stats carregadas para ${Object.keys(stats).length} ações`);
+
+            } catch (error) {
+                addTestResult('❌ Teste de rate limiting', 'error', error.message);
+            }
+        }
+
+        // Input Validation Tests
+        async function testInputValidation() {
+            addTestResult('🔍 Teste de Validação de Input', 'info', 'Iniciando testes...');
+
+            if (!window.EsplanadaEatsValidator) {
+                addTestResult('❌ Validador não disponível', 'error', 'Service not loaded');
+                return;
+            }
+
+            // Test 1: Valid restaurant
+            const validRestaurant = {
+                name: 'Test Restaurant',
+                price: 'R$ 30-50',
+                hours: '12h00-23h00',
+                vegetarianOptions: 'Algumas',
+                access: 'Simples',
+                description: 'A test restaurant for validation',
+                averageQuality: 4.5
+            };
+
+            const restaurantValidation = window.EsplanadaEatsValidator.validateRestaurant(validRestaurant);
+            addTestResult('✅ Restaurante válido', restaurantValidation.isValid ? 'success' : 'error',
+                restaurantValidation.isValid ? 'Validação passou' : restaurantValidation.errors.join(', '));
+
+            // Test 2: Invalid restaurant (short name)
+            const invalidRestaurant = { ...validRestaurant, name: 'ABC' };
+            const invalidValidation = window.EsplanadaEatsValidator.validateRestaurant(invalidRestaurant);
+            addTestResult('❌ Restaurante inválido', !invalidValidation.isValid ? 'success' : 'error',
+                invalidValidation.isValid ? 'Deveria falhar' : invalidValidation.errors.join(', '));
+
+            // Test 3: Valid review
+            const validReview = {
+                restaurantId: 'test-restaurant-id',
+                quality: 4.5,
+                price: 4,
+                userName: 'Test User',
+                userFingerprint: 'test-fingerprint-123'
+            };
+
+            const reviewValidation = window.EsplanadaEatsValidator.validateReview(validReview);
+            addTestResult('✅ Avaliação válida', reviewValidation.isValid ? 'success' : 'error',
+                reviewValidation.isValid ? 'Validação passou' : reviewValidation.errors.join(', '));
+
+            // Test 4: Invalid review (invalid rating)
+            const invalidReview = { ...validReview, quality: 6 };
+            const invalidReviewValidation = window.EsplanadaEatsValidator.validateReview(invalidReview);
+            addTestResult('❌ Avaliação inválida', !invalidReviewValidation.isValid ? 'success' : 'error',
+                invalidReviewValidation.isValid ? 'Deveria falhar' : invalidReviewValidation.errors.join(', '));
+        }
+
+        // Storage Security Tests
+        async function testStorageSecurity() {
+            addTestResult('📁 Teste de Segurança - Storage', 'info', 'Iniciando testes...');
+
+            // Test file validation
+            if (!window.EsplanadaEatsValidator) {
+                addTestResult('❌ Validador não disponível', 'error', 'Service not loaded');
+                return;
+            }
+
+            // Test 1: Valid image file
+            const validFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+            const validImageValidation = window.EsplanadaEatsValidator.validateImage(validFile);
+            addTestResult('✅ Imagem válida', validImageValidation.isValid ? 'success' : 'error',
+                validImageValidation.isValid ? 'Validação passou' : validImageValidation.errors.join(', '));
+
+            // Test 2: Invalid file type
+            const invalidFile = new File(['test'], 'test.txt', { type: 'text/plain' });
+            const invalidFileValidation = window.EsplanadaEatsValidator.validateImage(invalidFile);
+            addTestResult('❌ Arquivo inválido', !invalidFileValidation.isValid ? 'success' : 'error',
+                invalidFileValidation.isValid ? 'Deveria falhar' : invalidFileValidation.errors.join(', '));
+        }
+
+        // Run all tests
+        async function runAllTests() {
+            document.getElementById('test-results').innerHTML = '';
+            testResults = [];
+
+            addTestResult('🧪 Iniciando Todos os Testes de Segurança', 'info', 'Firebase Security Rules Test Suite');
+
+            // Check if Firebase Authentication is enabled
+            const authEnabled = await checkAuthConfiguration();
+            if (authEnabled) {
+                addTestResult('🔐 Status da Autenticação', 'success', 'Firebase Authentication está habilitado');
+            } else {
+                addTestResult('🔐 Status da Autenticação', 'error', 'Firebase Authentication NÃO está habilitado');
+                addTestResult('🔧 Ação Necessária', 'info', 'Habilite Authentication no Firebase Console → Authentication');
+            }
+
+            // Check if security rules are deployed
+            const rulesDeployed = await checkSecurityRulesDeployment();
+            if (rulesDeployed) {
+                addTestResult('🔒 Status das Regras de Segurança', 'success', 'Regras de segurança estão ativas');
+            } else {
+                addTestResult('🔒 Status das Regras de Segurança', 'error', 'Regras de segurança NÃO estão ativas - Firebase está em modo de teste');
+            }
+
+            await testRestaurantSecurity();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testReviewSecurity();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testUserTrackingSecurity();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testRateLimiting();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testInputValidation();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testStorageSecurity();
+
+            addTestResult('✅ Todos os Testes Concluídos', 'success', `Executados ${testResults.length} testes`);
+        }
+
+        // Authentication functions
+        async function signInAnonymously() {
+            try {
+                const result = await auth.signInAnonymously();
+                addTestResult('🔓 Login anônimo', 'success', `UID: ${result.user.uid}`);
+            } catch (error) {
+                if (error.message.includes('configuration-not-found')) {
+                    addTestResult('🔓 Login anônimo', 'error', 'Firebase Authentication não está habilitado no projeto');
+                    addTestResult('🔧 Solução', 'info', 'Habilite Firebase Authentication no Firebase Console');
+                } else {
+                    addTestResult('🔓 Login anônimo', 'error', error.message);
+                }
+            }
+        }
+
+        async function signOut() {
+            try {
+                await auth.signOut();
+                addTestResult('🔒 Logout', 'success', 'Desconectado com sucesso');
+            } catch (error) {
+                addTestResult('🔒 Logout', 'error', error.message);
+            }
+        }
+
+        // Show deployment guide
+        function showDeploymentGuide() {
+            const guide = `
+🔥 FIBASE SECURITY RULES DEPLOYMENT GUIDE 🔥
+
+🚨 CURRENT STATUS: Security rules are NOT deployed yet!
+
+📋 STEPS TO DEPLOY:
+
+1️⃣ Deploy Firestore Rules:
+   firebase deploy --only firestore:rules
+
+2️⃣ Deploy Storage Rules:
+   firebase deploy --only storage:rules
+
+OR use automated script:
+   ./deploy-security-rules.sh
+
+📁 REQUIRED FILES:
+✅ firestore.rules (already created)
+✅ storage.rules (already created)
+✅ deploy-security-rules.sh (ready to use)
+
+🧪 AFTER DEPLOYMENT:
+✅ Unauthenticated writes will be blocked
+✅ All validation rules will be enforced
+✅ Rate limiting will be active
+✅ File upload restrictions will work
+
+🎯 EXPECTED TEST RESULTS:
+✅ Firebase Authentication está habilitado
+✅ Regras de segurança estão ativas
+✅ 🚫 Criar restaurante sem autenticação: Corretamente bloqueado
+✅ 🚫 Criar avaliação sem autenticação: Corretamente bloqueado
+            `;
+            alert(guide);
+        }
+
+        // Generate test report
+        function generateReport() {
+            const successCount = testResults.filter(r => r.result === 'success').length;
+            const errorCount = testResults.filter(r => r.result === 'error').length;
+            const infoCount = testResults.filter(r => r.result === 'info').length;
+
+            const report = `
+=== Firebase Security Rules Test Report ===
+Data: ${new Date().toLocaleString()}
+Total de Testes: ${testResults.length}
+Sucessos: ${successCount}
+Falhas: ${errorCount}
+Informações: ${infoCount}
+
+Resultados Detalhados:
+${testResults.map(r => `[${r.result.toUpperCase()}] ${r.test}: ${r.details || ''}`).join('\n')}
+            `;
+
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `security-test-report-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            console.log('🔒 Security test page loaded');
+            updateAuthStatus();
+        });
+
+        console.log('🔒 Firebase Security Rules Test Script Loaded');
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center py-4">
+            <h1>🔒 Test: Firebase Security Rules</h1>
+            <p class="lead">Test comprehensive Firebase Security Rules and validation</p>
+        </header>
+
+        <!-- Authentication & Security Status -->
+        <div class="mb-4">
+            <div id="auth-status" class="alert alert-info text-center">
+                🔐 Verificando autenticação...
+            </div>
+            <div id="security-status" class="alert alert-warning text-center" style="display: none;">
+                🔒 Verificando regras de segurança...
+            </div>
+            <div id="user-info" class="text-center text-muted small"></div>
+            <div class="text-center mt-2">
+                <button class="btn btn-primary btn-sm me-2" onclick="signInAnonymously()">🔓 Login Anônimo</button>
+                <button class="btn btn-secondary btn-sm" onclick="signOut()">🔒 Logout</button>
+                <button class="btn btn-warning btn-sm ms-2" onclick="showDeploymentGuide()">📋 Guia de Implantação</button>
+            </div>
+        </div>
+
+        <main>
+            <!-- Test Controls -->
+            <section class="my-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>🧪 Controles de Teste</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testRestaurantSecurity()">🍽️ Restaurantes</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testReviewSecurity()">⭐ Avaliações</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testUserTrackingSecurity()">👤 Rastreamento</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testRateLimiting()">⚡ Rate Limiting</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testInputValidation()">🔍 Validação</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary w-100" onclick="testStorageSecurity()">📁 Storage</button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <button class="btn btn-success w-100" onclick="runAllTests()">🚀 Executar Todos os Testes</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-secondary w-100" onclick="generateReport()">📄 Gerar Relatório</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Test Results -->
+            <section class="my-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>📊 Resultados dos Testes</h5>
+                        <span class="badge bg-primary" id="test-count">0 testes</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="test-results" style="max-height: 500px; overflow-y: auto;">
+                            <div class="text-center text-muted">
+                                Clique em "Executar Todos os Testes" para começar
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Rules Summary -->
+            <section class="my-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📋 Resumo das Regras de Segurança</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🍽️ Restaurantes</h6>
+                                <ul>
+                                    <li>✅ Leitura pública</li>
+                                    <li>🔒 Criação requer autenticação</li>
+                                    <li>🔒 Atualização apenas pelo dono</li>
+                                    <li>🔒 Exclusão apenas pelo dono</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>⭐ Avaliações</h6>
+                                <ul>
+                                    <li>✅ Leitura pública</li>
+                                    <li>🔒 Criação requer autenticação</li>
+                                    <li>🔒 Atualização apenas pelo autor</li>
+                                    <li>🔒 Exclusão apenas pelo autor</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>👤 Rastreamento</h6>
+                                <ul>
+                                    <li>🔒 Acesso apenas pelo usuário</li>
+                                    <li>🔒 Criação/Atualização controlada</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>📁 Storage</h6>
+                                <ul>
+                                    <li>✅ Leitura pública de imagens</li>
+                                    <li>🔒 Upload requer autenticação</li>
+                                    <li>🔒 Validação de arquivos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // TEMPORARY ADMIN RULES FOR CLEANUP
+    // WARNING: These rules allow full access to all collections
+    // Replace with original rules after cleanup is complete
+
+    match /{document=**} {
+      allow read, write, delete: if true; // Full admin access for cleanup
+    }
+  }
+}

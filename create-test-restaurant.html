@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Restaurante de Teste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Criar Restaurante de Teste</h1>
+
+        <div>
+            <button class="btn" onclick="createTestRestaurant()">Criar Restaurante Teste</button>
+            <button class="btn" onclick="createMultipleRestaurants()">Criar Vários Restaurantes</button>
+            <button class="btn" onclick="createTestRating()">Criar Avaliação Teste</button>
+            <button class="btn" onclick="location.href='/'">Voltar ao App</button>
+        </div>
+
+        <div id="log" class="log">Aguardando ação...</div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js?v=2.1.0"></script>
+
+    <script type="module">
+        import { StorageService } from './js/services/storage-service.js?v=2.1.0';
+
+        const logDiv = document.getElementById('log');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.createTestRestaurant = async function() {
+            try {
+                log('🍽️ Criando restaurante de teste...');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                const restaurantData = {
+                    name: 'Restaurante Teste - Esplanada',
+                    description: 'Um restaurante delicioso na Esplanada dos Ministérios para testar o sistema',
+                    address: 'Esplanada dos Ministérios, Brasília - DF',
+                    phone: '(61) 9999-8888',
+                    category: 'Comida Brasileira',
+                    price: 2, // Preço médio ($$)
+                    averageQuality: 4.2, // Avaliação inicial
+                    totalRatings: 1,
+                    photoUrl: 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Restaurante+Teste',
+                    ratingDistribution: {
+                        5: 1,
+                        4: 0,
+                        3: 0,
+                        2: 0,
+                        1: 0
+                    },
+                    confidenceScore: 1.0,
+                    weightedAverage: 4.2,
+                    standardDeviation: 0.0,
+                    median: 5,
+                    mode: 5,
+                    ratingLastUpdated: new Date().toISOString(),
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const restaurantId = await storageService.createRestaurant(restaurantData);
+                log(`✅ Restaurante criado com sucesso! ID: ${restaurantId}`, 'success');
+                log(`📊 Nome: ${restaurantData.name}`);
+                log(`💰 Preço: ${'$'.repeat(restaurantData.price)} (${restaurantData.price}/5)`);
+                log(`⭐ Avaliação: ${restaurantData.averageQuality}/5 (${restaurantData.totalRatings} avaliações)`);
+
+            } catch (error) {
+                log(`❌ Erro ao criar restaurante: ${error.message}`, 'error');
+            }
+        };
+
+        window.createMultipleRestaurants = async function() {
+            try {
+                log('🍽️ Criando múltiplos restaurantes de teste...');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                const restaurants = [
+                    {
+                        name: 'Cantinho da Esplanada',
+                        description: 'Comida caseira e aconchegante no coração da Esplanada',
+                        address: 'Setor Comercial Sul, Brasília - DF',
+                        phone: '(61) 3333-1111',
+                        category: 'Comida Brasileira',
+                        price: 2,
+                        averageQuality: 4.5,
+                        totalRatings: 12,
+                        photoUrl: 'https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=Cantinho+da+Esplanada'
+                    },
+                    {
+                        name: 'Sabor Mineiro',
+                        description: 'O melhor da culinária mineira em Brasília',
+                        address: 'Setor de Clubes Esportivos Sul, Brasília - DF',
+                        phone: '(61) 3333-2222',
+                        category: 'Comida Mineira',
+                        price: 3,
+                        averageQuality: 4.8,
+                        totalRatings: 8,
+                        photoUrl: 'https://via.placeholder.com/300x200/4ECDC4/FFFFFF?text=Sabor+Mineiro'
+                    },
+                    {
+                        name: 'Expresso da Esplanada',
+                        description: 'Café rápido e delicioso para quem trabalha na área',
+                        address: 'Esplanada dos Ministérios, Lote 2, Brasília - DF',
+                        phone: '(61) 3333-3333',
+                        category: 'Café',
+                        price: 1,
+                        averageQuality: 3.9,
+                        totalRatings: 25,
+                        photoUrl: 'https://via.placeholder.com/300x200/FFD93D/000000?text=Expresso+da+Esplanada'
+                    }
+                ];
+
+                for (let i = 0; i < restaurants.length; i++) {
+                    const restaurant = restaurants[i];
+                    log(`📊 Criando restaurante ${i + 1}/${restaurants.length}: ${restaurant.name}`);
+
+                    const restaurantData = {
+                        ...restaurant,
+                        ratingDistribution: {
+                            5: Math.floor(Math.random() * restaurant.totalRatings),
+                            4: Math.floor(Math.random() * restaurant.totalRatings),
+                            3: Math.floor(Math.random() * restaurant.totalRatings),
+                            2: Math.floor(Math.random() * restaurant.totalRatings),
+                            1: Math.floor(Math.random() * restaurant.totalRatings)
+                        },
+                        confidenceScore: Math.min(1.0, restaurant.totalRatings / 10),
+                        weightedAverage: restaurant.averageQuality,
+                        standardDeviation: Math.random() * 0.5 + 0.3,
+                        median: Math.floor(restaurant.averageQuality),
+                        mode: Math.floor(restaurant.averageQuality),
+                        ratingLastUpdated: new Date().toISOString(),
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+
+                    try {
+                        const restaurantId = await storageService.createRestaurant(restaurantData);
+                        log(`✅ ${restaurant.name} criado! ID: ${restaurantId}`, 'success');
+                    } catch (error) {
+                        log(`❌ Erro ao criar ${restaurant.name}: ${error.message}`, 'error');
+                    }
+                }
+
+                log('🎉 Criação de múltiplos restaurantes concluída!', 'success');
+
+            } catch (error) {
+                log(`❌ Erro ao criar restaurantes: ${error.message}`, 'error');
+            }
+        };
+
+        window.createTestRating = async function() {
+            try {
+                log('⭐ Criando avaliação de teste...');
+
+                if (!window.EsplanadaEatsFirebase || !window.EsplanadaEatsFirebase.firebase) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                const storageService = new StorageService(window.EsplanadaEatsFirebase.firebase);
+
+                // First get a restaurant to rate
+                const restaurants = await storageService.getRestaurants({ limit: 1 });
+
+                if (restaurants.length === 0) {
+                    log('❌ Nenhum restaurante encontrado. Crie um restaurante primeiro.', 'error');
+                    return;
+                }
+
+                const restaurant = restaurants[0];
+                log(`📊 Avaliando restaurante: ${restaurant.name}`);
+
+                const ratingData = {
+                    restaurantId: restaurant.id,
+                    rating: 5,
+                    quality: 5,
+                    userName: 'Usuário Teste',
+                    userFingerprint: 'test-fingerprint-' + Date.now(),
+                    comment: 'Excelente restaurante! Recomendo muito.',
+                    moderationStatus: 'approved',
+                    isReported: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                const ratingId = await storageService.createRating(ratingData);
+                log(`✅ Avaliação criada com sucesso! ID: ${ratingId}`, 'success');
+                log(`📊 Avaliação: ${ratingData.rating}/5 para ${restaurant.name}`);
+
+                // Update restaurant average
+                await storageService.updateRestaurantAverageRating(restaurant.id);
+                log('✅ Média do restaurante atualizada', 'success');
+
+            } catch (error) {
+                log(`❌ Erro ao criar avaliação: ${error.message}`, 'error');
+            }
+        };
+
+        // Initialize
+        log('🚀 Ferramenta de criação de testes carregada');
+        log('📋 Use os botões para criar restaurantes e avaliações de teste');
+    </script>
+</body>
+</html>

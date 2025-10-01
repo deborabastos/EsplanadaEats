@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for validation
+    function isValidRestaurant(data) {
+      return data.name is string &&
+             data.name.size() >= 4 &&
+             data.name.size() <= 100 &&
+             data.averageQuality is number &&
+             data.averageQuality >= 0 &&
+             data.averageQuality <= 5 &&
+             data.price is number &&
+             data.price >= 0 &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidRating(data) {
+      return data.restaurantId is string &&
+             data.restaurantId.size() > 0 &&
+             data.rating is number &&
+             data.rating >= 1 &&
+             data.rating <= 5 &&
+             data.userName is string &&
+             data.userName.size() > 0 &&
+             data.userName.size() <= 50 &&
+             data.userFingerprint is string &&
+             data.userFingerprint.size() > 0 &&
+             (data.userId is string || data.userId == null) &&
+             data.quality is number &&
+             data.quality >= 0 &&
+             data.quality <= 5 &&
+             (data.comment is string || data.comment == null) &&
+             (data.photos is list || data.photos == null) &&
+             data.moderationStatus is string &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidUserTracking(data) {
+      return data.userFingerprint is string &&
+             data.userFingerprint.size() > 0 &&
+             data.restaurantId is string &&
+             data.restaurantId.size() > 0 &&
+             data.hasReviewed is bool &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp &&
+             (data.userId is string || data.userId == null) &&
+             data.reviewCount is number &&
+             data.interactionType is string &&
+             data.lastInteraction is timestamp &&
+             data.firstInteraction is timestamp;
+    }
+
+    // TEMPORARY CLEANUP RULES - Allow full access for data cleanup
+    // WARNING: These rules are permissive and should only be used temporarily for cleanup
+
+    // Restaurants collection - Full access for cleanup
+    match /restaurants/{restaurantId} {
+      allow read, create, update, delete: if true; // Temporary full access for cleanup
+    }
+
+    // Ratings collection - Full access for cleanup
+    match /ratings/{ratingId} {
+      allow read, create, update, delete: if true; // Temporary full access for cleanup
+    }
+
+    // User tracking collection - Full access for cleanup
+    match /userTracking/{trackingId} {
+      allow read, create, update, delete: if true; // Temporary full access for cleanup
+    }
+
+    // Security logs collection - Full access for cleanup
+    match /security_logs/{logId} {
+      allow read, create, update, delete: if true; // Temporary full access for cleanup
+    }
+
+    // Connection tests collection - Public access
+    match /connection-tests/{testId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
+  }
+}

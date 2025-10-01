@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpar Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .warning {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            margin-bottom: 1rem;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fef2f2; color: #991b1b; }
+        .info { background: #dbeafe; color: #1e40af; }
+        .warning-result { background: #fef3c7; color: #92400e; }
+        button {
+            background: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 500;
+        }
+        button:hover { background: #b91c1c; }
+        button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+        .safe-btn {
+            background: #2563eb;
+        }
+        .safe-btn:hover {
+            background: #1d4ed8;
+        }
+        .progress {
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpar Dados do Firebase</h1>
+
+        <div class="warning">
+            <strong>⚠️ ATENÇÃO!</strong><br>
+            Esta operação irá deletar permanentemente todos os dados do Firebase:<br>
+            • Todos os restaurantes<br>
+            • Todas as avaliações/ratings<br>
+            • Todas as fotos de restaurantes<br>
+            • Todos os dados de rastreamento de usuários<br>
+            <br>
+            <strong>Esta ação não pode ser desfeita!</strong>
+        </div>
+
+        <div class="actions">
+            <button onclick="checkData()" class="safe-btn">📊 Ver Dados Atuais</button>
+            <button onclick="confirmCleanup()" id="cleanup-btn">🗑️ Limpar Tudo (Confirmação Necessária)</button>
+            <button onclick="deleteSpecific('restaurants')" class="safe-btn">🍽️ Apagar Restaurantes Apenas</button>
+            <button onclick="deleteSpecific('ratings')" class="safe-btn">⭐ Apagar Avaliações Apenas</button>
+            <button onclick="deleteSpecific('photos')" class="safe-btn">📸 Apagar Fotos Apenas</button>
+        </div>
+
+        <div id="results"></div>
+        <div id="progress" class="progress" style="display: none;"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="src/firebase-config.js"></script>
+
+    <script>
+        let confirmed = false;
+
+        function addResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            resultsDiv.appendChild(result);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        function showProgress(message) {
+            const progressDiv = document.getElementById('progress');
+            progressDiv.textContent = message;
+            progressDiv.style.display = 'block';
+        }
+
+        function hideProgress() {
+            const progressDiv = document.getElementById('progress');
+            progressDiv.style.display = 'none';
+        }
+
+        async function checkData() {
+            try {
+                addResult('🔍 Verificando dados atuais no Firebase...', 'info');
+
+                const db = window.EsplanadaEatsFirebase.db;
+                const storage = window.EsplanadaEatsFirebase.storage;
+
+                // Check restaurants
+                const restaurantsSnapshot = await db.collection('restaurants').get();
+                addResult(`🍽️ Restaurantes encontrados: ${restaurantsSnapshot.size}`, 'info');
+
+                // Check ratings
+                const ratingsSnapshot = await db.collection('ratings').get();
+                addResult(`⭐ Avaliações encontradas: ${ratingsSnapshot.size}`, 'info');
+
+                // Check reviews
+                const reviewsSnapshot = await db.collection('reviews').get();
+                addResult(`📝 Reviews encontrados: ${reviewsSnapshot.size}`, 'info');
+
+                // Check user tracking
+                const trackingSnapshot = await db.collection('userTracking').get();
+                addResult(`👤 Rastreamentos de usuário encontrados: ${trackingSnapshot.size}`, 'info');
+
+                // Check photos in storage
+                try {
+                    const storageRef = storage.ref();
+                    const photosRef = storageRef.child('restaurant-photos');
+                    const photosList = await photosRef.listAll();
+                    addResult(`📸 Pastas de fotos encontradas: ${photosList.prefixes.length}`, 'info');
+
+                    let totalPhotos = 0;
+                    for (const folder of photosList.prefixes) {
+                        const files = await folder.listAll();
+                        totalPhotos += files.items.length;
+                    }
+                    addResult(`📸 Total de fotos encontradas: ${totalPhotos}`, 'info');
+                } catch (error) {
+                    addResult(`📸 Erro ao verificar fotos: ${error.message}`, 'warning-result');
+                }
+
+                addResult('✅ Verificação de dados concluída', 'success');
+
+            } catch (error) {
+                addResult(`❌ Erro ao verificar dados: ${error.message}`, 'error');
+            }
+        }
+
+        function confirmCleanup() {
+            if (!confirmed) {
+                const btn = document.getElementById('cleanup-btn');
+                if (btn.textContent.includes('Confirmar')) {
+                    confirmed = true;
+                    btn.textContent = '🚨 EXECUTAR LIMPEZA AGORA!';
+                    btn.style.background = '#dc2626';
+                    addResult('⚠️ Clique novamente para confirmar a limpeza completa', 'warning-result');
+                } else {
+                    btn.textContent = '🚨 Confirmar Limpeza Completa';
+                    btn.style.background = '#f97316';
+                    addResult('⚠️ Você precisa confirmar clicando novamente', 'warning-result');
+                }
+            } else {
+                executeFullCleanup();
+            }
+        }
+
+        async function executeFullCleanup() {
+            try {
+                showProgress('Executando limpeza completa...');
+                addResult('🚀 Iniciando limpeza completa do Firebase...', 'info');
+
+                const db = window.EsplanadaEatsFirebase.db;
+                const storage = window.EsplanadaEatsFirebase.storage;
+
+                // 1. Delete all ratings
+                showProgress('Apagando avaliações...');
+                await deleteCollection(db, 'ratings');
+                addResult('✅ Todas as avaliações foram apagadas', 'success');
+
+                // 2. Delete all reviews
+                showProgress('Apagando reviews...');
+                await deleteCollection(db, 'reviews');
+                addResult('✅ Todas as reviews foram apagadas', 'success');
+
+                // 3. Delete all user tracking
+                showProgress('Apagando rastreamentos de usuário...');
+                await deleteCollection(db, 'userTracking');
+                addResult('✅ Todos os rastreamentos foram apagados', 'success');
+
+                // 4. Delete all restaurants
+                showProgress('Apagando restaurantes...');
+                await deleteCollection(db, 'restaurants');
+                addResult('✅ Todos os restaurantes foram apagados', 'success');
+
+                // 5. Delete all photos
+                showProgress('Apagando fotos...');
+                await deleteAllPhotos(storage);
+                addResult('✅ Todas as fotos foram apagadas', 'success');
+
+                // 6. Delete connection tests
+                showProgress('Apagando testes de conexão...');
+                await deleteCollection(db, 'connection-tests');
+                addResult('✅ Testes de conexão apagados', 'success');
+
+                hideProgress();
+                addResult('🎉 LIMPEZA COMPLETA REALIZADA COM SUCESSO!', 'success');
+                addResult('📱 O Firebase está completamente limpo', 'success');
+
+            } catch (error) {
+                hideProgress();
+                addResult(`❌ Erro durante a limpeza: ${error.message}`, 'error');
+                console.error('Cleanup error:', error);
+            }
+        }
+
+        async function deleteSpecific(collection) {
+            try {
+                showProgress(`Apagando ${collection}...`);
+                addResult(`🗑️ Apagando ${collection}...`, 'info');
+
+                if (collection === 'photos') {
+                    const storage = window.EsplanadaEatsFirebase.storage;
+                    await deleteAllPhotos(storage);
+                } else {
+                    const db = window.EsplanadaEatsFirebase.db;
+                    await deleteCollection(db, collection);
+                }
+
+                hideProgress();
+                addResult(`✅ ${collection} apagado(s) com sucesso`, 'success');
+
+            } catch (error) {
+                hideProgress();
+                addResult(`❌ Erro ao apagar ${collection}: ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteCollection(db, collectionName) {
+            const snapshot = await db.collection(collectionName).get();
+            const batchSize = 500; // Firestore limit
+            let deleted = 0;
+
+            for (let i = 0; i < snapshot.docs.length; i += batchSize) {
+                const batch = db.batch();
+                const chunk = snapshot.docs.slice(i, i + batchSize);
+
+                chunk.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+                deleted += chunk.length;
+                showProgress(`Apagando ${collectionName}: ${deleted}/${snapshot.docs.length}`);
+            }
+        }
+
+        async function deleteAllPhotos(storage) {
+            try {
+                const storageRef = storage.ref();
+                const photosRef = storageRef.child('restaurant-photos');
+
+                // List all folders in restaurant-photos
+                const foldersList = await photosRef.listAll();
+                let deletedFolders = 0;
+
+                for (const folder of foldersList.prefixes) {
+                    // List all files in this folder
+                    const filesList = await folder.listAll();
+                    let deletedFiles = 0;
+
+                    // Delete all files in this folder
+                    for (const file of filesList.items) {
+                        await file.delete();
+                        deletedFiles++;
+                    }
+
+                    // Delete the empty folder (this happens automatically in Firebase Storage)
+                    deletedFolders++;
+                    showProgress(`Apagando fotos: ${deletedFolders}/${foldersList.prefixes.length} pastas, ${deletedFiles} arquivos`);
+                }
+
+                // Also check for any files directly in restaurant-photos
+                const directFiles = await photosRef.listAll();
+                for (const file of directFiles.items) {
+                    await file.delete();
+                }
+
+            } catch (error) {
+                // If the folder doesn't exist or is empty, that's fine
+                if (!error.message.includes('does not exist')) {
+                    throw error;
+                }
+            }
+        }
+
+        // Initialize
+        addResult('📱 Sistema de limpeza carregado', 'success');
+        addResult('📊 Clique em "Ver Dados Atuais" para começar', 'info');
+    </script>
+</body>
+</html>

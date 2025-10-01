@@ -1,17 +1,70 @@
 # Story 4.2: Mobile Responsiveness
 
-## User Story
-Como usuário mobile, eu quero que o aplicativo funcione perfeitamente no meu celular e tablet, com interface adaptada para telas pequenas e gestos intuitivos para poder avaliar restaurantes facilmente em qualquer lugar.
+## Status
+Draft
+
+## Story
+**As a** mobile user,
+**I want** the application to work perfectly on my smartphone,
+**so that** I have an interface optimized for touch, intuitive navigation, and quick access to all features.
 
 ## Acceptance Criteria
-- [ ] Layout deve ser totalmente responsivo (mobile, tablet, desktop)
-- [ ] Touch targets devem ter no mínimo 44x44 pixels
-- [ ] Gestos de swipe devem funcionar para navegação
-- [ ] Modal de restaurante deve ser fullscreen em mobile
-- [ ] Formulário de avaliação deve ser otimizado para toque
-- [ ] Carregamento de imagens deve ser priorizado em conexões lentas
-- [ ] Teclado virtual não deve obscurecer elementos importantes
-- [ ] Testes devem passar em todos os dispositivos principais
+1. Interface must be fully responsive on all screen sizes
+2. Touch and gestures must work correctly on mobile devices
+3. Mobile navigation must be intuitive and accessible
+4. Performance must be optimized for mobile networks
+5. Text and buttons must be touch-friendly
+6. Mobile-specific features must be implemented
+7. Landscape orientation must be supported
+8. Mobile browsers must be fully supported
+
+## Tasks / Subtasks
+- [ ] Task 1: Implement responsive mobile interface (AC: 1, 5)
+  - [ ] Create mobile-optimized layouts
+  - [ ] Implement touch-friendly button sizes
+  - [ ] Add mobile-specific typography
+  - [ ] Ensure proper spacing for touch interactions
+- [ ] Task 2: Develop touch and gesture support (AC: 2)
+  - [ ] Implement touch event handling
+  - [ ] Add swipe gesture support
+  - [ ] Create pinch-to-zoom functionality
+  - [ ] Add long-press interactions
+- [ ] Task 3: Create mobile navigation system (AC: 3)
+  - [ ] Implement hamburger menu for mobile
+  - [ ] Add mobile-friendly search interface
+  - [ ] Create bottom navigation for key features
+  - [ ] Optimize navigation flow for mobile
+- [ ] Task 4: Optimize mobile performance (AC: 4)
+  - [ ] Implement mobile-specific optimizations
+  - [ ] Add lazy loading for mobile networks
+  - [ ] Optimize assets for mobile delivery
+  - [ ] Reduce JavaScript payload for mobile
+- [ ] Task 5: Add mobile-specific features (AC: 6)
+  - [ ] Implement geolocation features
+  - [ ] Add mobile camera integration
+  - [ ] Create mobile sharing capabilities
+  - [ ] Add mobile-specific notifications
+- [ ] Task 6: Support device orientations (AC: 7)
+  - [ ] Implement landscape mode layouts
+  - [ ] Add orientation change handling
+  - [ ] Optimize for different aspect ratios
+  - [ ] Ensure consistency across orientations
+- [ ] Task 7: Ensure mobile browser compatibility (AC: 8)
+  - [ ] Test on iOS Safari
+  - [ ] Test on Android Chrome
+  - [ ] Add fallbacks for older mobile browsers
+  - [ ] Implement progressive enhancement
+
+## Dev Notes
+This story focuses on creating an exceptional mobile experience with optimized touch interactions, intuitive navigation, and performance specifically designed for mobile devices and networks.
+- [ ] Texto e elementos devem ser legíveis em telas pequenas
+- [ ] Layout deve adaptar-se a orientação paisagem e retrato
+- [ ] Performance deve ser otimizada para redes móveis
+- [ ] Formulários devem ser fáceis de preencher em telas touch
+- [ ] Navegação deve ser intuitiva com gestos comuns de mobile
+- [ ] Deve suportar dispositivos com diferentes densidades de pixels
+- [ ] Interface deve seguir as diretrizes de mobile-first design
+- [ ] Tempo de carregamento deve ser mínimo em conexões 3G
 
 ## Technical Implementation
 

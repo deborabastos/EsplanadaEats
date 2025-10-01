@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance Monitor Test</title>
+</head>
+<body>
+    <div id="test">Testing Performance Monitor...</div>
+
+    <script type="module">
+        // Mock browser APIs that PerformanceMonitor needs
+        window.performance = {
+            now: () => Date.now(),
+            mark: () => {},
+            measure: () => {},
+            getEntriesByType: () => [],
+            getEntriesByName: () => []
+        };
+
+        window.requestAnimationFrame = (cb) => setTimeout(cb, 16);
+        window.PerformanceObserver = class {
+            constructor() {}
+            observe() {}
+        };
+
+        console.log('🧪 Testing Performance Monitor initialization...');
+
+        try {
+            import('./js/services/performance-monitor.js').then(module => {
+                console.log('✅ Performance monitor module loaded');
+
+                const monitor = new module.PerformanceMonitor();
+                console.log('✅ Performance monitor instantiated successfully');
+
+                // Test the problematic setupCardRenderMonitoring method
+                monitor.setupCardRenderMonitoring();
+                console.log('✅ setupCardRenderMonitoring completed without errors');
+
+                document.getElementById('test').innerHTML = '✅ All tests passed! Performance Monitor is working correctly.';
+                document.getElementById('test').style.color = 'green';
+
+            }).catch(err => {
+                console.error('❌ Error:', err);
+                document.getElementById('test').innerHTML = `❌ Error: ${err.message}`;
+                document.getElementById('test').style.color = 'red';
+            });
+        } catch (err) {
+            console.error('❌ Import error:', err);
+            document.getElementById('test').innerHTML = `❌ Import error: ${err.message}`;
+            document.getElementById('test').style.color = 'red';
+        }
+    </script>
+</body>
+</html>
